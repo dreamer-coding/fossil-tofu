@@ -40,7 +40,7 @@ void fossil_vector_destroy(fossil_vector_t* vector) {
     if (!vector) return;
 
     for (size_t i = 0; i < vector->size; ++i) {
-        fossil_tofu_destroy(vector[i].data);
+        fossil_vector_pop_at(vector, i);
     }
 
     fossil_tofu_free(vector->data);
