@@ -39,10 +39,15 @@ fossil_vector_t* fossil_vector_create(char* type) {
 void fossil_vector_destroy(fossil_vector_t* vector) {
     if (!vector) return;
 
+    for (size_t i = 0; i < vector->size; ++i) {
+        fossil_tofu_destroy(vector[i].data);
+    }
+
     fossil_tofu_free(vector->data);
     vector->data = NULL;
     vector->size = 0;
     vector->capacity = 0;
+    fossil_tofu_free(vector->type);
     fossil_tofu_free(vector);
 }
 
