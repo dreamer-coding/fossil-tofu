@@ -59,9 +59,9 @@ FOSSIL_TEST(test_vector_push_front) {
     ASSUME_ITS_EQUAL_I32(10, mock_vector->data[1].value.int_val);
     ASSUME_ITS_EQUAL_I32(42, mock_vector->data[2].value.int_val);
 
-    fossil_tofu_destroy(&element1);
-    fossil_tofu_destroy(&element2);
-    fossil_tofu_destroy(&element3);
+    // fossil_tofu_destroy(&element1);
+    // fossil_tofu_destroy(&element2);
+    // fossil_tofu_destroy(&element3);
 }
 
 FOSSIL_TEST(test_vector_push_back) {
@@ -80,9 +80,9 @@ FOSSIL_TEST(test_vector_push_back) {
     ASSUME_ITS_EQUAL_I32(10, mock_vector->data[1].value.int_val);
     ASSUME_ITS_EQUAL_I32(5, mock_vector->data[2].value.int_val);
 
-    fossil_tofu_destroy(&element1);
-    fossil_tofu_destroy(&element2);
-    fossil_tofu_destroy(&element3);
+    // fossil_tofu_destroy(&element1);
+    // fossil_tofu_destroy(&element2);
+    // fossil_tofu_destroy(&element3);
 }
 
 FOSSIL_TEST(test_vector_push_at) {
@@ -106,10 +106,10 @@ FOSSIL_TEST(test_vector_push_at) {
     ASSUME_ITS_EQUAL_I32(10, mock_vector->data[2].value.int_val);
     ASSUME_ITS_EQUAL_I32(5, mock_vector->data[3].value.int_val);
 
-    fossil_tofu_destroy(&element1);
-    fossil_tofu_destroy(&element2);
-    fossil_tofu_destroy(&element3);
-    fossil_tofu_destroy(&element4);
+    // fossil_tofu_destroy(&element1);
+    // fossil_tofu_destroy(&element2);
+    // fossil_tofu_destroy(&element3);
+    // fossil_tofu_destroy(&element4);
 }
 
 FOSSIL_TEST(test_vector_pop_front) {
@@ -130,9 +130,9 @@ FOSSIL_TEST(test_vector_pop_front) {
     ASSUME_ITS_EQUAL_U32(1, mock_vector->size);
     ASSUME_ITS_EQUAL_I32(42, mock_vector->data[0].value.int_val);
 
-    fossil_tofu_destroy(&element1);
-    fossil_tofu_destroy(&element2);
-    fossil_tofu_destroy(&element3);
+    // fossil_tofu_destroy(&element1);
+    // fossil_tofu_destroy(&element2);
+    // fossil_tofu_destroy(&element3);
 }
 
 FOSSIL_TEST(test_vector_pop_back) {
@@ -153,9 +153,9 @@ FOSSIL_TEST(test_vector_pop_back) {
     ASSUME_ITS_EQUAL_U32(1, mock_vector->size);
     ASSUME_ITS_EQUAL_I32(42, mock_vector->data[0].value.int_val);
 
-    fossil_tofu_destroy(&element1);
-    fossil_tofu_destroy(&element2);
-    fossil_tofu_destroy(&element3);
+    // fossil_tofu_destroy(&element1);
+    // fossil_tofu_destroy(&element2);
+    // fossil_tofu_destroy(&element3);
 }
 
 FOSSIL_TEST(test_vector_pop_at) {
@@ -176,9 +176,9 @@ FOSSIL_TEST(test_vector_pop_at) {
     ASSUME_ITS_EQUAL_I32(42, mock_vector->data[0].value.int_val);
     ASSUME_ITS_EQUAL_I32(5, mock_vector->data[1].value.int_val);
 
-    fossil_tofu_destroy(&element1);
-    fossil_tofu_destroy(&element2);
-    fossil_tofu_destroy(&element3);
+    // fossil_tofu_destroy(&element1);
+    // fossil_tofu_destroy(&element2);
+    // fossil_tofu_destroy(&element3);
 }
 
 FOSSIL_TEST(test_vector_erase) {
@@ -199,9 +199,9 @@ FOSSIL_TEST(test_vector_erase) {
     ASSUME_ITS_EQUAL_I32(42, mock_vector->data[0].value.int_val);
     ASSUME_ITS_EQUAL_I32(5, mock_vector->data[1].value.int_val);
 
-    fossil_tofu_destroy(&element1);
-    fossil_tofu_destroy(&element2);
-    fossil_tofu_destroy(&element3);
+    // fossil_tofu_destroy(&element1);
+    // fossil_tofu_destroy(&element2);
+    // fossil_tofu_destroy(&element3);
 }
 
 FOSSIL_TEST(test_vector_erase_if) {
@@ -223,9 +223,9 @@ FOSSIL_TEST(test_vector_erase_if) {
     ASSUME_ITS_EQUAL_I32(42, mock_vector->data[0].value.int_val);
     ASSUME_ITS_EQUAL_I32(5, mock_vector->data[1].value.int_val);
 
-    fossil_tofu_destroy(&element1);
-    fossil_tofu_destroy(&element2);
-    fossil_tofu_destroy(&element3);
+    // fossil_tofu_destroy(&element1);
+    // fossil_tofu_destroy(&element2);
+    // fossil_tofu_destroy(&element3);
     fossil_tofu_destroy(&targetElement);
 }
 
@@ -249,9 +249,9 @@ FOSSIL_TEST(test_vector_search) {
     ASSUME_ITS_EQUAL_I32(-1, fossil_vector_search(mock_vector, nonExistingElement));
 
     fossil_tofu_destroy(&nonExistingElement);
-    fossil_tofu_destroy(&element1);
-    fossil_tofu_destroy(&element2);
-    fossil_tofu_destroy(&element3);
+    // fossil_tofu_destroy(&element1);
+    // fossil_tofu_destroy(&element2);
+    // fossil_tofu_destroy(&element3);
 }
 
 FOSSIL_TEST(test_vector_reverse) {
@@ -272,9 +272,9 @@ FOSSIL_TEST(test_vector_reverse) {
     ASSUME_ITS_EQUAL_I32(10, mock_vector->data[1].value.int_val);
     ASSUME_ITS_EQUAL_I32(42, mock_vector->data[2].value.int_val);
 
-    fossil_tofu_destroy(&element1);
-    fossil_tofu_destroy(&element2);
-    fossil_tofu_destroy(&element3);
+    // fossil_tofu_destroy(&element1);
+    // fossil_tofu_destroy(&element2);
+    // fossil_tofu_destroy(&element3);
 }
 
 FOSSIL_TEST(test_vector_size) {
