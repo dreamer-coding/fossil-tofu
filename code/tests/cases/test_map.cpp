@@ -41,7 +41,7 @@ FOSSIL_TEARDOWN(cpp_map_tofu_fixture) {
 // * * * * * * * * * * * * * * * * * * * * * * * *
 
 FOSSIL_TEST_CASE(cpp_test_map_create_destroy) {
-    fossil_map_t* map = fossil_map_create_container("ordered", "i32");
+    fossil_map_t* map = fossil_map_create_container(const_cast<char *>("ordered"), const_cast<char *>("i32"));
     ASSUME_ITS_TRUE(map != NULL);
     fossil_map_destroy(map);
 }
@@ -54,72 +54,72 @@ FOSSIL_TEST_CASE(cpp_test_map_create_default) {
 }
 
 FOSSIL_TEST_CASE(cpp_test_map_create_copy) {
-    fossil_map_t* map1 = fossil_map_create_container("ordered", "i32");
-    fossil_tofu_t tofu = fossil_tofu_create("i32", "42");
-    fossil_map_insert(map1, "key1", tofu);
+    fossil_map_t* map1 = fossil_map_create_container(const_cast<char *>("ordered"), const_cast<char *>("i32"));
+    fossil_tofu_t tofu = fossil_tofu_create(const_cast<char *>("i32"), const_cast<char *>("42"));
+    fossil_map_insert(map1, const_cast<char *>("key1"), tofu);
     fossil_map_t* map2 = fossil_map_create_copy(map1);
     ASSUME_ITS_TRUE(map2 != NULL);
     ASSUME_ITS_TRUE(fossil_map_size(map2) == 1);
-    fossil_tofu_t* value = fossil_map_get(map2, "key1");
+    fossil_tofu_t* value = fossil_map_get(map2, const_cast<char *>("key1"));
     ASSUME_ITS_TRUE(value != NULL);
-    ASSUME_ITS_EQUAL_CSTR(value->value.data, "42");
+    ASSUME_ITS_EQUAL_CSTR(value->value.data, const_cast<char *>("42"));
     fossil_map_destroy(map1);
     fossil_map_destroy(map2);
     fossil_tofu_destroy(&tofu);
 }
 
 FOSSIL_TEST_CASE(cpp_test_map_create_move) {
-    fossil_map_t* map1 = fossil_map_create_container("ordered", "i32");
-    fossil_tofu_t tofu = fossil_tofu_create("i32", "42");
-    fossil_map_insert(map1, "key1", tofu);
+    fossil_map_t* map1 = fossil_map_create_container(const_cast<char *>("ordered"), const_cast<char *>("i32"));
+    fossil_tofu_t tofu = fossil_tofu_create(const_cast<char *>("i32"), const_cast<char *>("42"));
+    fossil_map_insert(map1, const_cast<char *>("key1"), tofu);
     fossil_map_t* map2 = fossil_map_create_move(map1);
     ASSUME_ITS_TRUE(map2 != NULL);
     ASSUME_ITS_TRUE(fossil_map_size(map2) == 1);
     ASSUME_ITS_TRUE(fossil_map_size(map1) == 0);
-    fossil_tofu_t* value = fossil_map_get(map2, "key1");
+    fossil_tofu_t* value = fossil_map_get(map2, const_cast<char *>("key1"));
     ASSUME_ITS_TRUE(value != NULL);
-    ASSUME_ITS_EQUAL_CSTR(value->value.data, "42");
+    ASSUME_ITS_EQUAL_CSTR(value->value.data, const_cast<char *>("42"));
     fossil_map_destroy(map2);
     fossil_tofu_destroy(&tofu);
 }
 
 FOSSIL_TEST_CASE(cpp_test_map_insert_get) {
-    fossil_map_t* map = fossil_map_create_container("ordered", "i32");
-    fossil_tofu_t tofu = fossil_tofu_create("i32", "42");
-    ASSUME_ITS_TRUE(fossil_map_insert(map, "key1", tofu) == FOSSIL_TOFU_SUCCESS);
-    fossil_tofu_t* value = fossil_map_get(map, "key1");
+    fossil_map_t* map = fossil_map_create_container(const_cast<char *>("ordered"), const_cast<char *>("i32"));
+    fossil_tofu_t tofu = fossil_tofu_create(const_cast<char *>("i32"), const_cast<char *>("42"));
+    ASSUME_ITS_TRUE(fossil_map_insert(map, const_cast<char *>("key1"), tofu) == FOSSIL_TOFU_SUCCESS);
+    fossil_tofu_t* value = fossil_map_get(map, const_cast<char *>("key1"));
     ASSUME_ITS_TRUE(value != NULL);
-    ASSUME_ITS_EQUAL_CSTR(value->value.data, "42");
+    ASSUME_ITS_EQUAL_CSTR(value->value.data, const_cast<char *>("42"));
     fossil_map_destroy(map);
     fossil_tofu_destroy(&tofu);
 }
 
 FOSSIL_TEST_CASE(cpp_test_map_erase) {
-    fossil_map_t* map = fossil_map_create_container("ordered", "i32");
-    fossil_tofu_t tofu = fossil_tofu_create("i32", "42");
-    fossil_map_insert(map, "key1", tofu);
-    ASSUME_ITS_TRUE(fossil_map_erase(map, "key1") == FOSSIL_TOFU_SUCCESS);
-    ASSUME_ITS_TRUE(fossil_map_get(map, "key1") == NULL);
+    fossil_map_t* map = fossil_map_create_container(const_cast<char *>("ordered"), const_cast<char *>("i32"));
+    fossil_tofu_t tofu = fossil_tofu_create(const_cast<char *>("i32"), const_cast<char *>("42"));
+    fossil_map_insert(map, const_cast<char *>("key1"), tofu);
+    ASSUME_ITS_TRUE(fossil_map_erase(map, const_cast<char *>("key1")) == FOSSIL_TOFU_SUCCESS);
+    ASSUME_ITS_TRUE(fossil_map_get(map, const_cast<char *>("key1")) == NULL);
     fossil_map_destroy(map);
     fossil_tofu_destroy(&tofu);
 }
 
 FOSSIL_TEST_CASE(cpp_test_map_contains) {
-    fossil_map_t* map = fossil_map_create_container("ordered", "i32");
-    fossil_tofu_t tofu = fossil_tofu_create("i32", "42");
-    fossil_map_insert(map, "key1", tofu);
-    ASSUME_ITS_TRUE(fossil_map_contains(map, "key1") == true);
-    ASSUME_ITS_TRUE(fossil_map_contains(map, "key2") == false);
+    fossil_map_t* map = fossil_map_create_container(const_cast<char *>("ordered"), const_cast<char *>("i32"));
+    fossil_tofu_t tofu = fossil_tofu_create(const_cast<char *>("i32"), const_cast<char *>("42"));
+    fossil_map_insert(map, const_cast<char *>("key1"), tofu);
+    ASSUME_ITS_TRUE(fossil_map_contains(map, const_cast<char *>("key1")) == true);
+    ASSUME_ITS_TRUE(fossil_map_contains(map, const_cast<char *>("key2")) == false);
     fossil_map_destroy(map);
     fossil_tofu_destroy(&tofu);
 }
 
 FOSSIL_TEST_CASE(cpp_test_map_size) {
-    fossil_map_t* map = fossil_map_create_container("ordered", "i32");
-    fossil_tofu_t tofu1 = fossil_tofu_create("i32", "42");
-    fossil_tofu_t tofu2 = fossil_tofu_create("i32", "84");
-    fossil_map_insert(map, "key1", tofu1);
-    fossil_map_insert(map, "key2", tofu2);
+    fossil_map_t* map = fossil_map_create_container(const_cast<char *>("ordered"), const_cast<char *>("i32"));
+    fossil_tofu_t tofu1 = fossil_tofu_create(const_cast<char *>("i32"), const_cast<char *>("42"));
+    fossil_tofu_t tofu2 = fossil_tofu_create(const_cast<char *>("i32"), const_cast<char *>("84"));
+    fossil_map_insert(map, const_cast<char *>("key1"), tofu1);
+    fossil_map_insert(map, const_cast<char *>("key2"), tofu2);
     ASSUME_ITS_TRUE(fossil_map_size(map) == 2);
     fossil_map_destroy(map);
     fossil_tofu_destroy(&tofu1);
@@ -127,22 +127,22 @@ FOSSIL_TEST_CASE(cpp_test_map_size) {
 }
 
 FOSSIL_TEST_CASE(cpp_test_map_not_empty) {
-    fossil_map_t* map = fossil_map_create_container("ordered", "i32");
-    fossil_tofu_t tofu = fossil_tofu_create("i32", "42");
-    fossil_map_insert(map, "key1", tofu);
+    fossil_map_t* map = fossil_map_create_container(const_cast<char *>("ordered"), const_cast<char *>("i32"));
+    fossil_tofu_t tofu = fossil_tofu_create(const_cast<char *>("i32"), const_cast<char *>("42"));
+    fossil_map_insert(map, const_cast<char *>("key1"), tofu);
     ASSUME_ITS_TRUE(fossil_map_not_empty(map) == true);
     fossil_map_destroy(map);
     fossil_tofu_destroy(&tofu);
 }
 
 FOSSIL_TEST_CASE(cpp_test_map_is_empty) {
-    fossil_map_t* map = fossil_map_create_container("ordered", "i32");
+    fossil_map_t* map = fossil_map_create_container(const_cast<char *>("ordered"), const_cast<char *>("i32"));
     ASSUME_ITS_TRUE(fossil_map_is_empty(map) == true);
     fossil_map_destroy(map);
 }
 
 FOSSIL_TEST_CASE(cpp_test_map_not_cnullptr) {
-    fossil_map_t* map = fossil_map_create_container("ordered", "i32");
+    fossil_map_t* map = fossil_map_create_container(const_cast<char *>("ordered"), const_cast<char *>("i32"));
     ASSUME_ITS_TRUE(fossil_map_not_cnullptr(map) == true);
     fossil_map_destroy(map);
 }
