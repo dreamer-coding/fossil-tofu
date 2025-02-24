@@ -450,16 +450,6 @@ namespace fossil {
             }
 
             /**
-             * Get the element at the specified index in the doubly linked list.
-             * 
-             * @param index The index of the element to get.
-             * @return      The element at the specified index.
-             */
-            std::string get(size_t index) const {
-                return std::string(fossil_dlist_get(dlist, index));
-            }
-
-            /**
              * Get the first element in the doubly linked list.
              * 
              * @return The first element in the doubly linked list.
@@ -473,27 +463,8 @@ namespace fossil {
              * 
              * @return The last element in the doubly linked list.
              */
-            std::string get_front() const {
-                return std::string(fossil_dlist_get_front(dlist));
-            }
-
-            /**
-             * Get the last element in the doubly linked list.
-             * 
-             * @return The last element in the doubly linked list.
-             */
             char *get_back() const {
                 return fossil_dlist_get_back(dlist);
-            }
-
-            /**
-             * Set the element at the specified index in the doubly linked list.
-             * 
-             * @param index   The index at which to set the element.
-             * @param element The element to set.
-             */
-            std::string get_back() const {
-                return std::string(fossil_dlist_get_back(dlist));
             }
 
             /**
