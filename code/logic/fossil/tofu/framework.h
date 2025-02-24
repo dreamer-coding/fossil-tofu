@@ -27,5 +27,6 @@
 #include "queue.h"
 #include "vector.h"
 #include "stack.h"
+#include "map.h"
 
 #endif /* FOSSIL_TOFU_FRAMEWORK_H */
