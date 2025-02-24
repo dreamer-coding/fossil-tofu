@@ -450,12 +450,31 @@ namespace fossil {
             }
 
             /**
+             * Get the element at the specified index in the doubly linked list.
+             * 
+             * @param index The index of the element to get.
+             * @return      The element at the specified index.
+             */
+            std::string get(size_t index) const {
+                return std::string(fossil_dlist_get(dlist, index));
+            }
+
+            /**
              * Get the first element in the doubly linked list.
              * 
              * @return The first element in the doubly linked list.
              */
             char *get_front() const {
                 return fossil_dlist_get_front(dlist);
+            }
+
+            /**
+             * Get the last element in the doubly linked list.
+             * 
+             * @return The last element in the doubly linked list.
+             */
+            std::string get_front() const {
+                return std::string(fossil_dlist_get_front(dlist));
             }
 
             /**
@@ -473,8 +492,28 @@ namespace fossil {
              * @param index   The index at which to set the element.
              * @param element The element to set.
              */
+            std::string get_back() const {
+                return std::string(fossil_dlist_get_back(dlist));
+            }
+
+            /**
+             * Set the element at the specified index in the doubly linked list.
+             * 
+             * @param index   The index at which to set the element.
+             * @param element The element to set.
+             */
             void set(size_t index, char *element) {
                 fossil_dlist_set(dlist, index, element);
+            }
+
+            /**
+             * Set the element at the specified index in the doubly linked list.
+             * 
+             * @param index   The index at which to set the element.
+             * @param element The element to set.
+             */
+            void set(size_t index, const std::string& element) {
+                fossil_dlist_set(dlist, index, const_cast<char*>(element.c_str()));
             }
 
             /**
