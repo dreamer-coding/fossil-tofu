@@ -42,8 +42,8 @@ fossil_map_t* fossil_map_create_container(const char* type, const char* map_type
     if (map == NULL) {
         return NULL;
     }
-    map->map_type = map_type;
-    map->type = type;
+    map->map_type = (char *)map_type;
+    map->type = (char *)type;
     map->size = 0;
     if (strcmp(map_type, "unordered") == 0) {
         map->bucket_count = 10;
