@@ -178,24 +178,43 @@ namespace fossil {
         
         class Map {
         public:
+            /**
+             * Create a new map with the specified type ("ordered" or "unordered").
+             *
+             * @param type     The type of data the map will store.
+             * @param map_type The type of map to create.
+             */
             Map(const std::string& type, const std::string& map_type) : map_(fossil_map_create_container(type.c_str(), map_type.c_str())) {
                 if (map_ == nullptr) {
                     throw std::runtime_error("Failed to create map");
                 }
             }
 
+            /**
+             * Create a new map with default values.
+             */
             Map() : map_(fossil_map_create_default()) {
                 if (map_ == nullptr) {
                     throw std::runtime_error("Failed to create map");
                 }
             }
 
+            /**
+             * Create a new map by copying an existing map.
+             *
+             * @param other The map to copy.
+             */
             Map(const Map& other) : map_(fossil_map_create_copy(other.map_)) {
                 if (map_ == nullptr) {
                     throw std::runtime_error("Failed to create map");
                 }
             }
 
+            /**
+             * Create a new map by moving an existing map.
+             *
+             * @param other The map to move.
+             */
             Map(Map&& other) : map_(fossil_map_create_move(other.map_)) {
                 other.map_ = nullptr;
                 if (map_ == nullptr) {
@@ -203,46 +222,98 @@ namespace fossil {
                 }
             }
 
+            /**
+             * Destroy the map and free allocated memory.
+             */
             ~Map() {
                 fossil_map_destroy(map_);
             }
 
+            /**
+             * Copy assignment operator.
+             *
+             * @param other The map to copy.
+             * @return      The copied map.
+             */
             void insert(const std::string& key, const fossil_tofu_t& value) {
                 if (fossil_map_insert(map_, key.c_str(), value) != 0) {
                     throw std::runtime_error("Failed to insert key-value pair");
                 }
             }
 
+            /**
+             * Move assignment operator.
+             *
+             * @param other The map to move.
+             * @return      The moved map.
+             */
             void erase(const std::string& key) {
                 if (fossil_map_erase(map_, key.c_str()) != 0) {
                     throw std::runtime_error("Failed to erase key");
                 }
             }
 
+            /**
+             * Get a value associated with a key.
+             *
+             * @param key The key to look up.
+             * @return    The value associated with the key or NULL if not found.
+             */
             fossil_tofu_t* get(const std::string& key) const {
                 return fossil_map_get(map_, key.c_str());
             }
 
+            /**
+             * Check if a key exists in the map.
+             *
+             * @param key The key to check.
+             * @return    True if the key exists, false otherwise.
+             */
             bool contains(const std::string& key) const {
                 return fossil_map_contains(map_, key.c_str());
             }
 
+            /**
+             * Get the size of the map.
+             *
+             * @return The number of elements in the map.
+             */
             size_t size() const {
                 return fossil_map_size(map_);
             }
 
+            /**
+             * Check if the map is not a null pointer.
+             *
+             * @return True if the map is not a null pointer, false otherwise.
+             */
             bool not_cnullptr() const {
                 return fossil_map_not_cnullptr(map_);
             }
 
+            /**
+             * Check if the map is a null pointer.
+             *
+             * @return True if the map is a null pointer, false otherwise.
+             */
             bool is_cnullptr() const {
                 return fossil_map_is_cnullptr(map_);
             }
 
+            /**
+             * Check if the map is not empty.
+             *
+             * @return True if the map contains at least one element, false otherwise.
+             */
             bool not_empty() const {
                 return fossil_map_not_empty(map_);
             }
 
+            /**
+             * Check if the map is empty.
+             *
+             * @return True if the map contains no elements, false otherwise.
+             */
             bool is_empty() const {
                 return fossil_map_is_empty(map_);
             }
