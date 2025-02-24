@@ -264,7 +264,7 @@ namespace fossil {
              *
              * @param type The type of data the doubly linked list will store.
              */ 
-            DList(char* type) : dlist(fossil_dlist_create_container(type)) {
+            DList(const char* type) : dlist(fossil_dlist_create_container(const_cast<char *>(type))) {
                 if (dlist == nullptr) {
                 throw std::runtime_error("Failed to create doubly linked list");
                 }
