@@ -230,21 +230,21 @@ FOSSIL_TEST_CASE(cpp_test_dlist_class_set) {
     fossil::tofu::DList dlist(const_cast<char *>("i32"));
     dlist.insert(const_cast<char *>("1"));
     dlist.set(0, const_cast<char *>("42"));
-    ASSUME_ITS_TRUE(dlist.get(0) == const_cast<char *>("42"));
+    ASSUME_ITS_EQUAL_CSTR(dlist.get(0) "42");
 }
 
 FOSSIL_TEST_CASE(cpp_test_dlist_class_set_front) {
     fossil::tofu::DList dlist(const_cast<char *>("i32"));
     dlist.insert(const_cast<char *>("1"));
     dlist.set_front(const_cast<char *>("42"));
-    ASSUME_ITS_TRUE(dlist.get_front() == const_cast<char *>("42"));
+    ASSUME_ITS_EQUAL_CSTR(dlist.get_front(), "42");
 }
 
 FOSSIL_TEST_CASE(cpp_test_dlist_class_set_back) {
     fossil::tofu::DList dlist(const_cast<char *>("i32"));
     dlist.insert(const_cast<char *>("1"));
     dlist.set_back(const_cast<char *>("42"));
-    ASSUME_ITS_TRUE(dlist.get_back() == const_cast<char *>("42"));
+    ASSUME_ITS_EQUAL_CSTR(dlist.get_back(), "42");
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * *
