@@ -230,7 +230,7 @@ FOSSIL_TEST_CASE(cpp_test_dlist_class_set) {
     fossil::tofu::DList dlist(const_cast<char *>("i32"));
     dlist.insert(const_cast<char *>("1"));
     dlist.set(0, const_cast<char *>("42"));
-    ASSUME_ITS_EQUAL_CSTR(dlist.get(0) "42");
+    ASSUME_ITS_EQUAL_CSTR(dlist.get(0), "42");
 }
 
 FOSSIL_TEST_CASE(cpp_test_dlist_class_set_front) {
