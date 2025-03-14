@@ -240,42 +240,6 @@ void fossil_arraylist_set_front(fossil_arraylist_t* alist, fossil_tofu_t element
  */
 void fossil_arraylist_set_back(fossil_arraylist_t* alist, fossil_tofu_t element);
 
-/**
- * Check if the given array list pointer is `cnullptr`.
- *
- * @param alist The array list to check.
- * @return      True if `alist` is `cnullptr`, false otherwise.
- * @note        Time complexity: O(1)
- */
-bool fossil_arraylist_is_cnullptr(const fossil_arraylist_t* alist);
-
-/**
- * Check if the given array list pointer is not `cnullptr`.
- *
- * @param alist The array list to check.
- * @return      True if `alist` is not `cnullptr`, false otherwise.
- * @note        Time complexity: O(1)
- */
-bool fossil_arraylist_not_cnullptr(const fossil_arraylist_t* alist);
-
-/**
- * Check if the array list is empty.
- *
- * @param alist The array list.
- * @return      True if `alist` is empty, false otherwise.
- * @note        Time complexity: O(1)
- */
-bool fossil_arraylist_is_empty(const fossil_arraylist_t* alist);
-
-/**
- * Check if the array list is not empty.
- *
- * @param alist The array list.
- * @return      True if `alist` is not empty, false otherwise.
- * @note        Time complexity: O(1)
- */
-bool fossil_arraylist_not_empty(const fossil_arraylist_t* alist);
-
 #ifdef __cplusplus
 }
 #endif
