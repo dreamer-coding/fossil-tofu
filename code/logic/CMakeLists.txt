@@ -11,6 +11,7 @@ set(TEST_CODE
     doublylist.c
     dqueue.c
     forwardlist.c
+    arraylist.c
     pqueue.c
     queue.c
     setof.c
