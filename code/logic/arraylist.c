@@ -25,17 +25,19 @@ fossil_arraylist_t* fossil_arraylist_create_container(char* type) {
     if (arraylist == NULL) {
         return NULL;
     }
-    arraylist->data = NULL;
+    arraylist->head = NULL;
+    arraylist->tail = NULL;
     arraylist->size = 0;
-    arraylist->capacity = 0;
     arraylist->type = fossil_tofu_strdup(type);
     return arraylist;
 }
 
+// Create a default array list
 fossil_arraylist_t* fossil_arraylist_create_default(void) {
     return fossil_arraylist_create_container("any");
 }
 
+// Create a copy of an array list
 fossil_arraylist_t* fossil_arraylist_create_copy(const fossil_arraylist_t* other) {
     fossil_arraylist_t* arraylist = (fossil_arraylist_t*)fossil_tofu_alloc(sizeof(fossil_arraylist_t));
     if (arraylist == NULL) {
@@ -43,34 +45,46 @@ fossil_arraylist_t* fossil_arraylist_create_copy(const fossil_arraylist_t* other
     }
     arraylist->type = fossil_tofu_strdup(other->type);
     arraylist->size = other->size;
-    arraylist->capacity = other->capacity;
-    arraylist->data = fossil_tofu_alloc(arraylist->capacity * sizeof(void*));
-    for (size_t i = 0; i < arraylist->size; i++) {
-        arraylist->data[i] = fossil_tofu_create(arraylist->type, fossil_tofu_get_value(&other->data[i]));
+    arraylist->head = NULL;
+    arraylist->tail = NULL;
+
+    // Copy the elements from the other list
+    fossil_arraylist_node_t* node = other->head;
+    while (node) {
+        fossil_arraylist_insert(arraylist, fossil_tofu_get_value(&node->data));
+        node = node->next;
     }
+
     return arraylist;
 }
 
+// Move an array list
 fossil_arraylist_t* fossil_arraylist_create_move(fossil_arraylist_t* other) {
     fossil_arraylist_t* arraylist = (fossil_arraylist_t*)fossil_tofu_alloc(sizeof(fossil_arraylist_t));
     if (arraylist == NULL) {
         return NULL;
     }
     arraylist->type = other->type;
-    arraylist->data = other->data;
     arraylist->size = other->size;
-    arraylist->capacity = other->capacity;
-    other->data = NULL;
+    arraylist->head = other->head;
+    arraylist->tail = other->tail;
+
+    // Reset the other list
+    other->head = NULL;
+    other->tail = NULL;
     other->size = 0;
-    other->capacity = 0;
     return arraylist;
 }
 
+// Destroy an array list
 void fossil_arraylist_destroy(fossil_arraylist_t* arraylist) {
-    for (size_t i = 0; i < arraylist->size; i++) {
-        fossil_tofu_destroy(&arraylist->data[i]);
+    fossil_arraylist_node_t* node = arraylist->head;
+    while (node) {
+        fossil_tofu_destroy(&node->data);
+        fossil_arraylist_node_t* next = node->next;
+        fossil_tofu_free(node);
+        node = next;
     }
-    fossil_tofu_free(arraylist->data);
     fossil_tofu_free(arraylist->type);
     fossil_tofu_free(arraylist);
 }
@@ -79,42 +93,63 @@ void fossil_arraylist_destroy(fossil_arraylist_t* arraylist) {
 // Utility functions
 // *****************************************************************************
 
-static int32_t fossil_arraylist_resize(fossil_arraylist_t* arraylist) {
-    size_t new_capacity = (arraylist->capacity == 0) ? 1 : arraylist->capacity * 2;
-    void** new_data = (void**)fossil_tofu_alloc(new_capacity * sizeof(void*));
-    if (new_data == NULL) {
+int32_t fossil_arraylist_insert(fossil_arraylist_t* arraylist, char* data) {
+    fossil_arraylist_node_t* new_node = (fossil_arraylist_node_t*)fossil_tofu_alloc(sizeof(fossil_arraylist_node_t));
+    if (new_node == NULL) {
         return FOSSIL_TOFU_FAILURE;
     }
-    for (size_t i = 0; i < arraylist->size; i++) {
-        new_data[i] = arraylist->data[i];
-    }
-    fossil_tofu_free(arraylist->data);
-    arraylist->data = new_data;
-    arraylist->capacity = new_capacity;
-    return FOSSIL_TOFU_SUCCESS;
-}
+    new_node->data = fossil_tofu_create(arraylist->type, data);
+    new_node->prev = arraylist->tail;
+    new_node->next = NULL;
 
-int32_t fossil_arraylist_insert(fossil_arraylist_t* arraylist, char* data) {
-    if (arraylist->size == arraylist->capacity) {
-        if (fossil_arraylist_resize(arraylist) == FOSSIL_TOFU_FAILURE) {
-            return FOSSIL_TOFU_FAILURE;
-        }
+    if (arraylist->tail) {
+        arraylist->tail->next = new_node;
     }
-    arraylist->data[arraylist->size] = fossil_tofu_create(arraylist->type, data);
+    arraylist->tail = new_node;
+
+    if (arraylist->head == NULL) {
+        arraylist->head = new_node;
+    }
+
     arraylist->size++;
     return FOSSIL_TOFU_SUCCESS;
 }
 
-int32_t fossil_arraylist_remove(fossil_arraylist_t* arraylist, size_t index) {
-    if (index >= arraylist->size) {
+// Remove the last element from the array list
+int32_t fossil_arraylist_remove(fossil_arraylist_t* arraylist) {
+    if (arraylist->size == 0) {
         return FOSSIL_TOFU_FAILURE;
     }
-    fossil_tofu_destroy(&arraylist->data[index]);
-    for (size_t i = index; i < arraylist->size - 1; i++) {
-        arraylist->data[i] = arraylist->data[i + 1];
+
+    fossil_arraylist_node_t* last_node = arraylist->tail;
+    if (last_node->prev) {
+        last_node->prev->next = NULL;
     }
+    arraylist->tail = last_node->prev;
+
+    fossil_tofu_destroy(&last_node->data);
+    fossil_tofu_free(last_node);
+
     arraylist->size--;
     return FOSSIL_TOFU_SUCCESS;
+}
+
+// Reverse the array list (in-place)
+void fossil_arraylist_reverse(fossil_arraylist_t* arraylist) {
+    fossil_arraylist_node_t* current = arraylist->head;
+    fossil_arraylist_node_t* temp = NULL;
+
+    while (current) {
+        temp = current->prev;
+        current->prev = current->next;
+        current->next = temp;
+        current = current->prev;
+    }
+
+    // Swap head and tail
+    if (temp) {
+        arraylist->head = temp->prev;
+    }
 }
 
 size_t fossil_arraylist_size(const fossil_arraylist_t* arraylist) {
@@ -172,20 +207,4 @@ void fossil_arraylist_set_back(fossil_arraylist_t* arraylist, char* element) {
     if (arraylist->size > 0) {
         fossil_tofu_set_value(&arraylist->data[arraylist->size - 1], element);
     }
-}
-
-bool fossil_arraylist_is_cnullptr(const fossil_arraylist_t* alist) {
-    return (alist == NULL);
-}
-
-bool fossil_arraylist_not_cnullptr(const fossil_arraylist_t* alist) {
-    return (alist != NULL);
-}
-
-bool fossil_arraylist_is_empty(const fossil_arraylist_t* alist) {
-    return (fossil_arraylist_is_cnullptr(alist) || alist->size == 0);
-}
-
-bool fossil_arraylist_not_empty(const fossil_arraylist_t* alist) {
-    return (fossil_arraylist_not_cnullptr(alist) && alist->size > 0);
 }
