@@ -175,11 +175,11 @@ void fossil_arraylist_set_back(fossil_arraylist_t* arraylist, char* element) {
 }
 
 bool fossil_arraylist_is_cnullptr(const fossil_arraylist_t* alist) {
-    return (alist == cnullptr);
+    return (alist == NULL);
 }
 
 bool fossil_arraylist_not_cnullptr(const fossil_arraylist_t* alist) {
-    return (alist != cnullptr);
+    return (alist != NULL);
 }
 
 bool fossil_arraylist_is_empty(const fossil_arraylist_t* alist) {
