@@ -26,7 +26,7 @@ fossil_btree_t* fossil_btree_create_container(char* type) {
     fossil_btree_t* tree = (fossil_btree_t*)malloc(sizeof(fossil_btree_t));
     if (tree) {
         tree->root = NULL;
-        tree->type = strdup(type);  // Store the type string
+        tree->type = fossil_tofu_strdup(type);  // Store the type string
     }
     return tree;
 }
@@ -36,15 +36,36 @@ fossil_btree_t* fossil_btree_create_default(void) {
     return fossil_btree_create_container("default");
 }
 
-// Function to create a new binary tree by copying an existing tree.
+// Recursive helper function to copy nodes
+static fossil_btree_node_t* fossil_btree_copy_nodes(const fossil_btree_node_t* node) {
+    if (node == NULL) return NULL;
+
+    // Allocate a new node
+    fossil_btree_node_t* new_node = (fossil_btree_node_t*)malloc(sizeof(fossil_btree_node_t));
+    if (new_node == NULL) return NULL;  // Memory allocation failure
+
+    // Copy data and height
+    new_node->data = fossil_tofu_copy(node->data); // Assuming fossil_tofu_copy duplicates tofu data
+    new_node->height = node->height;
+
+    // Recursively copy left and right subtrees
+    new_node->left = fossil_btree_copy_nodes(node->left);
+    new_node->right = fossil_btree_copy_nodes(node->right);
+
+    return new_node;
+}
+
+// Function to create a new binary tree by copying an existing tree
 fossil_btree_t* fossil_btree_create_copy(const fossil_btree_t* other) {
+    if (other == NULL) return NULL;
+
     fossil_btree_t* tree = (fossil_btree_t*)malloc(sizeof(fossil_btree_t));
-    if (tree) {
-        tree->type = strdup(other->type);
-        tree->root = NULL; // Copy root logic will be handled separately
-        // To copy the tree, you need a recursive function that traverses the original tree
-        // and inserts each node into the new tree.
-    }
+    if (tree == NULL) return NULL;  // Memory allocation failure
+
+    // Copy metadata
+    tree->type = fossil_tofu_strdup(other->type); // Assuming this duplicates the type string
+    tree->root = fossil_btree_copy_nodes(other->root); // Recursively copy the tree
+
     return tree;
 }
 
@@ -74,215 +95,173 @@ void fossil_btree_destroy(fossil_btree_t* tree) {
 // Tree functions (Insert, Erase, Size, etc.)
 // *****************************************************************************
 
-// Function to perform a right rotation (used in AVL insertion and deletion).
-fossil_btree_node_t* fossil_btree_rotate_right(fossil_btree_node_t* y) {
+// Utility function to get the height of a node
+static int fossil_btree_height(fossil_btree_node_t* node) {
+    return (node == NULL) ? 0 : node->height;
+}
+
+// Utility function to calculate balance factor of a node
+static int fossil_btree_balance_factor(fossil_btree_node_t* node) {
+    if (node == NULL) return 0;
+    return fossil_btree_height(node->left) - fossil_btree_height(node->right);
+}
+
+// Utility function to perform right rotation (LL rotation)
+static fossil_btree_node_t* fossil_btree_rotate_right(fossil_btree_node_t* y) {
     fossil_btree_node_t* x = y->left;
     fossil_btree_node_t* T2 = x->right;
 
-    // Perform rotation
+    // Rotation
     x->right = y;
     y->left = T2;
 
     // Update heights
-    y->height = max(fossil_btree_get_height(y->left), fossil_btree_get_height(y->right)) + 1;
-    x->height = max(fossil_btree_get_height(x->left), fossil_btree_get_height(x->right)) + 1;
+    y->height = 1 + fmax(fossil_btree_height(y->left), fossil_btree_height(y->right));
+    x->height = 1 + fmax(fossil_btree_height(x->left), fossil_btree_height(x->right));
 
     return x;  // New root
 }
 
-// Function to perform a left rotation (used in AVL insertion and deletion).
-fossil_btree_node_t* fossil_btree_rotate_left(fossil_btree_node_t* x) {
+// Utility function to perform left rotation (RR rotation)
+static fossil_btree_node_t* fossil_btree_rotate_left(fossil_btree_node_t* x) {
     fossil_btree_node_t* y = x->right;
     fossil_btree_node_t* T2 = y->left;
 
-    // Perform rotation
+    // Rotation
     y->left = x;
     x->right = T2;
 
     // Update heights
-    x->height = max(fossil_btree_get_height(x->left), fossil_btree_get_height(x->right)) + 1;
-    y->height = max(fossil_btree_get_height(y->left), fossil_btree_get_height(y->right)) + 1;
+    x->height = 1 + fmax(fossil_btree_height(x->left), fossil_btree_height(x->right));
+    y->height = 1 + fmax(fossil_btree_height(y->left), fossil_btree_height(y->right));
 
     return y;  // New root
 }
 
-// Function to get the height of a node.
-int32_t fossil_btree_get_height(fossil_btree_node_t* node) {
+// Recursive function to insert a node in the AVL tree and balance it
+static fossil_btree_node_t* fossil_btree_insert_node(fossil_btree_node_t* node, fossil_tofu_t data) {
+    // Standard BST insertion
     if (node == NULL) {
-        return 0;
+        fossil_btree_node_t* new_node = malloc(sizeof(fossil_btree_node_t));
+        if (new_node == NULL) return NULL;  // Memory allocation failure
+        new_node->data = data;
+        new_node->left = new_node->right = NULL;
+        new_node->height = 1;  // New node has height 1
+        return new_node;
     }
-    return node->height;
+
+    if (data < node->data)
+        node->left = fossil_btree_insert_node(node->left, data);
+    else if (data > node->data)
+        node->right = fossil_btree_insert_node(node->right, data);
+    else
+        return node;  // Duplicate keys are not allowed
+
+    // Update height
+    node->height = 1 + fmax(fossil_btree_height(node->left), fossil_btree_height(node->right));
+
+    // Get balance factor
+    int balance = fossil_btree_balance_factor(node);
+
+    // Balance the node
+    if (balance > 1 && data < node->left->data)  // Left-Left case
+        return fossil_btree_rotate_right(node);
+    if (balance < -1 && data > node->right->data)  // Right-Right case
+        return fossil_btree_rotate_left(node);
+    if (balance > 1 && data > node->left->data) {  // Left-Right case
+        node->left = fossil_btree_rotate_left(node->left);
+        return fossil_btree_rotate_right(node);
+    }
+    if (balance < -1 && data < node->right->data) {  // Right-Left case
+        node->right = fossil_btree_rotate_right(node->right);
+        return fossil_btree_rotate_left(node);
+    }
+
+    return node;  // No rotation needed
 }
 
-// Function to get the balance factor of a node.
-int32_t fossil_btree_get_balance(fossil_btree_node_t* node) {
-    if (node == NULL) {
-        return 0;
-    }
-    return fossil_btree_get_height(node->left) - fossil_btree_get_height(node->right);
-}
-
-// Function to insert data into the binary tree (AVL insertion).
+// Public function to insert data into AVL tree
 int32_t fossil_btree_insert(fossil_btree_t* tree, fossil_tofu_t data) {
-    // Helper function for recursive insertion
-    fossil_btree_node_t* insert_node(fossil_btree_node_t* node, fossil_tofu_t data) {
-        // Perform normal BST insertion
-        if (node == NULL) {
-            // Allocate memory for new node and initialize it
-            fossil_btree_node_t* new_node = malloc(sizeof(fossil_btree_node_t));
-            new_node->data = data;
-            new_node->left = new_node->right = NULL;
-            new_node->height = 1;  // New node is initially at height 1
-            return new_node;
-        }
-
-        // Insert data recursively
-        if (data < node->data) {
-            node->left = insert_node(node->left, data);
-        } else if (data > node->data) {
-            node->right = insert_node(node->right, data);
-        } else {
-            // Duplicate data is not allowed in this tree
-            return node;
-        }
-
-        // Update the height of this node
-        node->height = max(fossil_btree_get_height(node->left), fossil_btree_get_height(node->right)) + 1;
-
-        // Get the balance factor
-        int balance = fossil_btree_get_balance(node);
-
-        // If the node becomes unbalanced, perform rotations
-
-        // Left Left Case
-        if (balance > 1 && data < node->left->data) {
-            return fossil_btree_rotate_right(node);
-        }
-
-        // Right Right Case
-        if (balance < -1 && data > node->right->data) {
-            return fossil_btree_rotate_left(node);
-        }
-
-        // Left Right Case
-        if (balance > 1 && data > node->left->data) {
-            node->left = fossil_btree_rotate_left(node->left);
-            return fossil_btree_rotate_right(node);
-        }
-
-        // Right Left Case
-        if (balance < -1 && data < node->right->data) {
-            node->right = fossil_btree_rotate_right(node->right);
-            return fossil_btree_rotate_left(node);
-        }
-
-        // Return the (unchanged) node pointer
-        return node;
-    }
-
-    // Call the recursive insert function
-    tree->root = insert_node(tree->root, data);
-
-    return 0;  // Return success
+    if (tree == NULL) return -1;
+    tree->root = fossil_btree_insert_node(tree->root, data);
+    return 0;
 }
 
-// Function to perform AVL deletion.
-int32_t fossil_btree_erase(fossil_btree_t* tree, fossil_tofu_t data) {
-    // Helper function for recursive deletion
-    fossil_btree_node_t* delete_node(fossil_btree_node_t* node, fossil_tofu_t data) {
-        if (node == NULL) {
-            return node;
-        }
+// Utility function to find the node with the minimum value
+static fossil_btree_node_t* fossil_btree_min_node(fossil_btree_node_t* node) {
+    fossil_btree_node_t* current = node;
+    while (current && current->left != NULL)
+        current = current->left;
+    return current;
+}
 
-        // Perform standard BST delete
-        if (data < node->data) {
-            node->left = delete_node(node->left, data);
-        } else if (data > node->data) {
-            node->right = delete_node(node->right, data);
-        } else {
-            // Node to be deleted found
+// Recursive function to delete a node from the AVL tree
+static fossil_btree_node_t* fossil_btree_delete_node(fossil_btree_node_t* root, fossil_tofu_t data) {
+    if (root == NULL) return root;
 
-            // Node has one child or no child
-            if (node->left == NULL) {
-                fossil_btree_node_t* temp = node->right;
-                free(node);
-                return temp;
-            } else if (node->right == NULL) {
-                fossil_btree_node_t* temp = node->left;
-                free(node);
-                return temp;
+    // Standard BST deletion
+    if (data < root->data)
+        root->left = fossil_btree_delete_node(root->left, data);
+    else if (data > root->data)
+        root->right = fossil_btree_delete_node(root->right, data);
+    else {
+        if ((root->left == NULL) || (root->right == NULL)) {
+            fossil_btree_node_t* temp = root->left ? root->left : root->right;
+            if (temp == NULL) {
+                free(root);
+                return NULL;
+            } else {
+                *root = *temp;
+                free(temp);
             }
-
-            // Node has two children: Get the inorder successor (smallest in the right subtree)
-            fossil_btree_node_t* temp = fossil_btree_get_min_node(node->right);
-
-            // Copy the inorder successor's content to this node
-            node->data = temp->data;
-
-            // Delete the inorder successor
-            node->right = delete_node(node->right, temp->data);
+        } else {
+            fossil_btree_node_t* temp = fossil_btree_min_node(root->right);
+            root->data = temp->data;
+            root->right = fossil_btree_delete_node(root->right, temp->data);
         }
-
-        // If the tree has only one node, return
-        if (node == NULL) {
-            return node;
-        }
-
-        // Update the height of this node
-        node->height = max(fossil_btree_get_height(node->left), fossil_btree_get_height(node->right)) + 1;
-
-        // Get the balance factor
-        int balance = fossil_btree_get_balance(node);
-
-        // If the node becomes unbalanced, perform rotations
-
-        // Left Left Case
-        if (balance > 1 && fossil_btree_get_balance(node->left) >= 0) {
-            return fossil_btree_rotate_right(node);
-        }
-
-        // Right Right Case
-        if (balance < -1 && fossil_btree_get_balance(node->right) <= 0) {
-            return fossil_btree_rotate_left(node);
-        }
-
-        // Left Right Case
-        if (balance > 1 && fossil_btree_get_balance(node->left) < 0) {
-            node->left = fossil_btree_rotate_left(node->left);
-            return fossil_btree_rotate_right(node);
-        }
-
-        // Right Left Case
-        if (balance < -1 && fossil_btree_get_balance(node->right) > 0) {
-            node->right = fossil_btree_rotate_right(node->right);
-            return fossil_btree_rotate_left(node);
-        }
-
-        return node;
     }
 
-    // Call the recursive delete function
-    tree->root = delete_node(tree->root, data);
+    if (root == NULL) return root;
 
-    return 0;  // Return success
+    // Update height
+    root->height = 1 + fmax(fossil_btree_height(root->left), fossil_btree_height(root->right));
+
+    // Balance the node
+    int balance = fossil_btree_balance_factor(root);
+
+    if (balance > 1 && fossil_btree_balance_factor(root->left) >= 0)  // Left-Left case
+        return fossil_btree_rotate_right(root);
+    if (balance > 1 && fossil_btree_balance_factor(root->left) < 0) {  // Left-Right case
+        root->left = fossil_btree_rotate_left(root->left);
+        return fossil_btree_rotate_right(root);
+    }
+    if (balance < -1 && fossil_btree_balance_factor(root->right) <= 0)  // Right-Right case
+        return fossil_btree_rotate_left(root);
+    if (balance < -1 && fossil_btree_balance_factor(root->right) > 0) {  // Right-Left case
+        root->right = fossil_btree_rotate_right(root->right);
+        return fossil_btree_rotate_left(root);
+    }
+
+    return root;
 }
 
-// Function to get the size (number of nodes) of the binary tree.
+// Public function to remove a node
+int32_t fossil_btree_erase(fossil_btree_t* tree, fossil_tofu_t data) {
+    if (tree == NULL) return -1;
+    tree->root = fossil_btree_delete_node(tree->root, data);
+    return 0;
+}
+
+// Recursive helper function to count nodes
+static size_t fossil_btree_count_nodes(fossil_btree_node_t* node) {
+    if (node == NULL) return 0;
+    return 1 + fossil_btree_count_nodes(node->left) + fossil_btree_count_nodes(node->right);
+}
+
+// Public function to get the size of the tree
 size_t fossil_btree_size(const fossil_btree_t* tree) {
-    size_t size = 0;
-
-    // Helper function for recursive size calculation
-    void count_nodes(fossil_btree_node_t* node) {
-        if (node != NULL) {
-            size++;  // Increment size
-            count_nodes(node->left);  // Count left subtree
-            count_nodes(node->right); // Count right subtree
-        }
-    }
-
-    count_nodes(tree->root);
-
-    return size;
+    if (tree == NULL) return 0;
+    return fossil_btree_count_nodes(tree->root);
 }
 
 // Function to check if the tree is not empty.
