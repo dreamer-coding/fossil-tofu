@@ -18,22 +18,6 @@
 #include <math.h>
 
 // *****************************************************************************
-// Type definitions
-// *****************************************************************************
-
-typedef struct fossil_btree_node_t {
-    fossil_tofu_t data;
-    struct fossil_btree_node_t* left;
-    struct fossil_btree_node_t* right;
-    int32_t height;
-} fossil_btree_node_t;
-
-typedef struct fossil_btree_t {
-    fossil_btree_node_t* root;
-    char* type;
-} fossil_btree_t;
-
-// *****************************************************************************
 // Utility functions
 // *****************************************************************************
 
