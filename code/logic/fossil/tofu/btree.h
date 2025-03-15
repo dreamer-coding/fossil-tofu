@@ -215,35 +215,58 @@ fossil_tofu_t* fossil_btree_find(const fossil_btree_t* tree, fossil_tofu_t data)
 #ifdef __cplusplus
 }
 
+#include <iostream>
+
 namespace fossil {
 namespace tofu {
 
-class FossilBTree {
+/**
+ * @class BTree
+ * @brief A C++ wrapper for the Fossil AVL binary tree implementation.
+ *
+ * This class provides a modern C++ interface to the `fossil_btree_` API,
+ * supporting object-oriented usage, resource management, and convenient
+ * operator overloads.
+ */
+class BTree {
 private:
-    fossil_btree_t* tree;
+    fossil_btree_t* tree; ///< Pointer to the underlying AVL tree.
 
 public:
-    // Default constructor
-    FossilBTree() : tree(fossil_btree_create_default()) {}
+    /**
+     * @brief Default constructor. Creates an empty AVL tree.
+     */
+    BTree() : tree(fossil_btree_create_default()) {}
 
-    // Parameterized constructor
-    explicit FossilBTree(const std::string& type) : tree(fossil_btree_create_container(const_cast<char*>(type.c_str()))) {}
+    /**
+     * @brief Parameterized constructor. Creates an AVL tree with a specific data type.
+     */
+    explicit BTree(const std::string& type) 
+        : tree(fossil_btree_create_container(const_cast<char*>(type.c_str()))) {}
 
-    // Copy constructor
-    FossilBTree(const FossilBTree& other) : tree(fossil_btree_create_copy(other.tree)) {}
+    /**
+     * @brief Copy constructor.
+     */
+    BTree(const BTree& other) : tree(fossil_btree_create_copy(other.tree)) {}
 
-    // Move constructor
-    FossilBTree(FossilBTree&& other) noexcept : tree(other.tree) {
+    /**
+     * @brief Move constructor.
+     */
+    BTree(BTree&& other) noexcept : tree(other.tree) {
         other.tree = nullptr;
     }
 
-    // Destructor
-    ~FossilBTree() {
+    /**
+     * @brief Destructor. Frees tree memory.
+     */
+    ~BTree() {
         fossil_btree_destroy(tree);
     }
 
-    // Copy assignment operator
-    FossilBTree& operator=(const FossilBTree& other) {
+    /**
+     * @brief Copy assignment operator.
+     */
+    BTree& operator=(const BTree& other) {
         if (this != &other) {
             fossil_btree_destroy(tree);
             tree = fossil_btree_create_copy(other.tree);
@@ -251,8 +274,10 @@ public:
         return *this;
     }
 
-    // Move assignment operator
-    FossilBTree& operator=(FossilBTree&& other) noexcept {
+    /**
+     * @brief Move assignment operator.
+     */
+    BTree& operator=(BTree&& other) noexcept {
         if (this != &other) {
             fossil_btree_destroy(tree);
             tree = other.tree;
@@ -261,72 +286,109 @@ public:
         return *this;
     }
 
-    // Insert an element
+    /**
+     * @brief Inserts an element into the tree.
+     */
     int32_t insert(const fossil_tofu_t& data) {
         return fossil_btree_insert(tree, data);
     }
 
-    // Erase an element
+    /**
+     * @brief Removes an element from the tree.
+     */
     int32_t erase(const fossil_tofu_t& data) {
         return fossil_btree_erase(tree, data);
     }
 
-    // Get the size of the tree
+    /**
+     * @brief Gets the number of elements in the tree.
+     */
     size_t get_size() const {
         return fossil_btree_size(tree);
     }
 
-    // Check if tree is empty
+    // *************************************************************************
+    // * Operator Overloads
+    // *************************************************************************
+
+    /** @brief Overload `+=` for inserting elements */
+    BTree& operator+=(const fossil_tofu_t& data) {
+        insert(data);
+        return *this;
+    }
+
+    /** @brief Overload `-=` for removing elements */
+    BTree& operator-=(const fossil_tofu_t& data) {
+        erase(data);
+        return *this;
+    }
+
+    /** @brief Overload `==` for equality comparison */
+    bool operator==(const BTree& other) const {
+        return fossil_btree_equals(tree, other.tree);
+    }
+
+    /** @brief Overload `!=` for inequality comparison */
+    bool operator!=(const BTree& other) const {
+        return !(*this == other);
+    }
+
+    /** @brief Overload `<` (compares sizes of trees) */
+    bool operator<(const BTree& other) const {
+        return get_size() < other.get_size();
+    }
+
+    /** @brief Overload `>` (compares sizes of trees) */
+    bool operator>(const BTree& other) const {
+        return get_size() > other.get_size();
+    }
+
+    /** @brief Overload `<=` */
+    bool operator<=(const BTree& other) const {
+        return get_size() <= other.get_size();
+    }
+
+    /** @brief Overload `>=` */
+    bool operator>=(const BTree& other) const {
+        return get_size() >= other.get_size();
+    }
+
+    // *************************************************************************
+    // * Additional Utility Methods
+    // *************************************************************************
+
+    /**
+     * @brief Checks if the tree is empty.
+     */
     bool is_empty() const {
         return fossil_btree_is_empty(tree);
     }
 
-    // Check if tree is not empty
-    bool not_empty() const {
-        return fossil_btree_not_empty(tree);
-    }
-
-    // Check if tree is a nullptr
-    bool is_cnullptr() const {
-        return fossil_btree_is_cnullptr(tree);
-    }
-
-    // Check if tree is not a nullptr
-    bool not_cnullptr() const {
-        return fossil_btree_not_cnullptr(tree);
-    }
-
-    // Get minimum element
-    fossil_tofu_t get_min() const {
-        return fossil_btree_get_min(tree);
-    }
-
-    // Get maximum element
-    fossil_tofu_t get_max() const {
-        return fossil_btree_get_max(tree);
-    }
-
-    // Find an element
+    /**
+     * @brief Finds an element in the tree.
+     */
     fossil_tofu_t* find(const fossil_tofu_t& data) const {
         return fossil_btree_find(tree, data);
     }
 
-    // In-order traversal
+    /**
+     * @brief Traverses the tree in-order and applies a function.
+     */
     void traverse_in_order(void (*action)(fossil_tofu_t)) const {
         fossil_btree_traverse_in_order(tree, action);
     }
 
-    // Pre-order traversal
-    void traverse_pre_order(void (*action)(fossil_tofu_t)) const {
-        fossil_btree_traverse_pre_order(tree, action);
+    /**
+     * @brief Overloads `<<` operator to print tree size.
+     */
+    friend std::ostream& operator<<(std::ostream& os, const BTree& tree) {
+        os << "BTree(Size: " << tree.get_size() << ")";
+        return os;
     }
 
-    // Post-order traversal
-    void traverse_post_order(void (*action)(fossil_tofu_t)) const {
-        fossil_btree_traverse_post_order(tree, action);
-    }
-
-    // Get raw tree pointer (for advanced operations)
+    /**
+     * @brief Retrieves the raw pointer to the underlying tree structure.
+     */
     fossil_btree_t* get_raw_tree() const {
         return tree;
     }
