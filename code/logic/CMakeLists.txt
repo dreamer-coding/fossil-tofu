@@ -15,6 +15,7 @@ set(TEST_CODE
     queue.c
     setof.c
     stack.c
+    btree.c
     tofu.c
     tuple.c
     vector.c
