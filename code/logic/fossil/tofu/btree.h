@@ -214,6 +214,127 @@ fossil_tofu_t* fossil_btree_find(const fossil_btree_t* tree, fossil_tofu_t data)
 
 #ifdef __cplusplus
 }
+
+namespace fossil {
+namespace tofu {
+
+class FossilBTree {
+private:
+    fossil_btree_t* tree;
+
+public:
+    // Default constructor
+    FossilBTree() : tree(fossil_btree_create_default()) {}
+
+    // Parameterized constructor
+    explicit FossilBTree(const std::string& type) : tree(fossil_btree_create_container(const_cast<char*>(type.c_str()))) {}
+
+    // Copy constructor
+    FossilBTree(const FossilBTree& other) : tree(fossil_btree_create_copy(other.tree)) {}
+
+    // Move constructor
+    FossilBTree(FossilBTree&& other) noexcept : tree(other.tree) {
+        other.tree = nullptr;
+    }
+
+    // Destructor
+    ~FossilBTree() {
+        fossil_btree_destroy(tree);
+    }
+
+    // Copy assignment operator
+    FossilBTree& operator=(const FossilBTree& other) {
+        if (this != &other) {
+            fossil_btree_destroy(tree);
+            tree = fossil_btree_create_copy(other.tree);
+        }
+        return *this;
+    }
+
+    // Move assignment operator
+    FossilBTree& operator=(FossilBTree&& other) noexcept {
+        if (this != &other) {
+            fossil_btree_destroy(tree);
+            tree = other.tree;
+            other.tree = nullptr;
+        }
+        return *this;
+    }
+
+    // Insert an element
+    int32_t insert(const fossil_tofu_t& data) {
+        return fossil_btree_insert(tree, data);
+    }
+
+    // Erase an element
+    int32_t erase(const fossil_tofu_t& data) {
+        return fossil_btree_erase(tree, data);
+    }
+
+    // Get the size of the tree
+    size_t get_size() const {
+        return fossil_btree_size(tree);
+    }
+
+    // Check if tree is empty
+    bool is_empty() const {
+        return fossil_btree_is_empty(tree);
+    }
+
+    // Check if tree is not empty
+    bool not_empty() const {
+        return fossil_btree_not_empty(tree);
+    }
+
+    // Check if tree is a nullptr
+    bool is_cnullptr() const {
+        return fossil_btree_is_cnullptr(tree);
+    }
+
+    // Check if tree is not a nullptr
+    bool not_cnullptr() const {
+        return fossil_btree_not_cnullptr(tree);
+    }
+
+    // Get minimum element
+    fossil_tofu_t get_min() const {
+        return fossil_btree_get_min(tree);
+    }
+
+    // Get maximum element
+    fossil_tofu_t get_max() const {
+        return fossil_btree_get_max(tree);
+    }
+
+    // Find an element
+    fossil_tofu_t* find(const fossil_tofu_t& data) const {
+        return fossil_btree_find(tree, data);
+    }
+
+    // In-order traversal
+    void traverse_in_order(void (*action)(fossil_tofu_t)) const {
+        fossil_btree_traverse_in_order(tree, action);
+    }
+
+    // Pre-order traversal
+    void traverse_pre_order(void (*action)(fossil_tofu_t)) const {
+        fossil_btree_traverse_pre_order(tree, action);
+    }
+
+    // Post-order traversal
+    void traverse_post_order(void (*action)(fossil_tofu_t)) const {
+        fossil_btree_traverse_post_order(tree, action);
+    }
+
+    // Get raw tree pointer (for advanced operations)
+    fossil_btree_t* get_raw_tree() const {
+        return tree;
+    }
+};
+
+} // namespace tofu
+} // namespace fossil
+
 #endif
 
 #endif /* FOSSIL_TOFU_FRAMEWORK_H */
