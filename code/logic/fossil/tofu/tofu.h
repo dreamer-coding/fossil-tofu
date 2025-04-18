@@ -325,148 +325,125 @@ namespace tofu {
  * A C++ wrapper around the `fossil_tofu_t` C structure that provides RAII-safe management of
  * typed value objects, supporting copy/move semantics, attribute assignment, and value mutation.
  */
+#include <memory>
+
 class Tofu {
 public:
-    /**
-     * @brief Constructs a new Tofu object with the given type and value.
-     * Throws a runtime_error if the type is invalid or creation fails.
-     */
+    // Constructors, destructors, and assignment operators
     Tofu(const std::string& type, const std::string& value) {
-        tofu_ = fossil_tofu_create(const_cast<char*>(type.c_str()), const_cast<char*>(value.c_str()));
-        if (tofu_.type == FOSSIL_TOFU_TYPE_ANY) {
+        tofu_ = std::make_unique<fossil_tofu_t>(fossil_tofu_create(const_cast<char*>(type.c_str()), const_cast<char*>(value.c_str())));
+        if (tofu_->type == FOSSIL_TOFU_TYPE_ANY) {
             throw std::runtime_error("Failed to create Tofu object");
         }
     }
 
-    /**
-     * @brief Destructor. Automatically destroys the internal C Tofu object.
-     */
-    ~Tofu() {
-        fossil_tofu_destroy(&tofu_);
-    }
+    ~Tofu() = default;
 
-    /**
-     * @brief Copy constructor. Creates a deep copy of another Tofu object.
-     */
     Tofu(const Tofu& other) {
-        tofu_ = *fossil_tofu_create_copy(&other.tofu_);
+        tofu_ = std::make_unique<fossil_tofu_t>(*fossil_tofu_create_copy(other.tofu_.get()));
     }
 
-    /**
-     * @brief Move constructor. Transfers ownership of another Tofu object.
-     */
-    Tofu(Tofu&& other) noexcept {
-        tofu_ = *fossil_tofu_create_move(&other.tofu_);
-        other.tofu_.type = FOSSIL_TOFU_TYPE_ANY;
-    }
+    Tofu(Tofu&& other) noexcept = default;
 
-    /**
-     * @brief Copy assignment operator. Destroys current value and copies from another Tofu.
-     */
     Tofu& operator=(const Tofu& other) {
         if (this != &other) {
-            fossil_tofu_destroy(&tofu_);
-            tofu_ = *fossil_tofu_create_copy(&other.tofu_);
+            tofu_ = std::make_unique<fossil_tofu_t>(*fossil_tofu_create_copy(other.tofu_.get()));
         }
         return *this;
     }
 
-    /**
-     * @brief Move assignment operator. Transfers ownership of another Tofu.
-     */
-    Tofu& operator=(Tofu&& other) noexcept {
-        if (this != &other) {
-            fossil_tofu_destroy(&tofu_);
-            tofu_ = *fossil_tofu_create_move(&other.tofu_);
-            other.tofu_.type = FOSSIL_TOFU_TYPE_ANY;
-        }
-        return *this;
+    Tofu& operator=(Tofu&& other) noexcept = default;
+
+    // Overloaded operators
+    bool operator==(const Tofu& other) const {
+        return fossil_tofu_equals(tofu_.get(), other.tofu_.get());
     }
 
-    /**
-     * @brief Gets the value stored in the Tofu object as a string.
-     */
+    bool operator!=(const Tofu& other) const {
+        return !(*this == other);
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Tofu& tofu) {
+        tofu.display();
+        return os;
+    }
+
+    // Member functions
     std::string get_value() const {
-        const char* value = fossil_tofu_get_value(&tofu_);
+        const char* value = fossil_tofu_get_value(tofu_.get());
         return value ? std::string(value) : std::string();
     }
 
-    /**
-     * @brief Checks if the value of this Tofu object is mutable.
-     */
     bool is_mutable() const {
-        return fossil_tofu_is_mutable(&tofu_);
+        return fossil_tofu_is_mutable(tofu_.get());
     }
 
-    /**
-     * @brief Sets a new value for this Tofu object. Throws on failure.
-     */
     void set_value(const std::string& value) {
-        if (fossil_tofu_set_value(&tofu_, const_cast<char*>(value.c_str())) != FOSSIL_TOFU_SUCCESS) {
+        if (fossil_tofu_set_value(tofu_.get(), const_cast<char*>(value.c_str())) != FOSSIL_TOFU_SUCCESS) {
             throw std::runtime_error("Failed to set value");
         }
     }
 
-    /**
-     * @brief Sets the mutability of this Tofu object. Throws on failure.
-     */
     void set_mutable(bool mutable_flag) {
-        if (fossil_tofu_set_mutable(&tofu_, mutable_flag) != FOSSIL_TOFU_SUCCESS) {
+        if (fossil_tofu_set_mutable(tofu_.get(), mutable_flag) != FOSSIL_TOFU_SUCCESS) {
             throw std::runtime_error("Failed to set mutable flag");
         }
     }
 
-    /**
-     * @brief Compares this Tofu object with another for equality.
-     */
-    bool equals(const Tofu& other) const {
-        return fossil_tofu_equals(&tofu_, &other.tofu_);
-    }
-
-    /**
-     * @brief Gets the name of the Tofu object's type.
-     */
     std::string get_type_name() const {
-        const char* type_name = fossil_tofu_type_name(tofu_.type);
+        const char* type_name = fossil_tofu_type_name(tofu_->type);
         return type_name ? std::string(type_name) : std::string();
     }
 
-    /**
-     * @brief Gets detailed type information about the Tofu object's type.
-     */
     std::string get_type_info() const {
-        const char* type_info = fossil_tofu_type_info(tofu_.type);
+        const char* type_info = fossil_tofu_type_info(tofu_->type);
         return type_info ? std::string(type_info) : std::string();
     }
 
-    /**
-     * @brief Retrieves the attribute metadata (name, description, id) of this Tofu object.
-     */
     const fossil_tofu_attribute_t* get_attribute() const {
-        return fossil_tofu_get_attribute(&tofu_);
+        return fossil_tofu_get_attribute(tofu_.get());
     }
 
-    /**
-     * @brief Sets the attribute metadata for this Tofu object. Throws on failure.
-     */
     void set_attribute(const std::string& name, const std::string& description, const std::string& id) {
-        if (fossil_tofu_set_attribute(&tofu_, name.c_str(), description.c_str(), id.c_str()) != FOSSIL_TOFU_SUCCESS) {
+        if (fossil_tofu_set_attribute(tofu_.get(), name.c_str(), description.c_str(), id.c_str()) != FOSSIL_TOFU_SUCCESS) {
             throw std::runtime_error("Failed to set attribute");
         }
     }
 
-    /**
-     * @brief Displays the Tofu object using the default renderer (typically to stdout).
-     */
     void display() const {
-        fossil_tofu_display(&tofu_);
+        fossil_tofu_display(tofu_.get());
+    }
+
+    // New methods
+    void copy_from(const Tofu& other) {
+        if (fossil_tofu_copy(tofu_.get(), other.tofu_.get()) != FOSSIL_TOFU_SUCCESS) {
+            throw std::runtime_error("Failed to copy Tofu object");
+        }
+    }
+
+    static Tofu create_default() {
+        std::unique_ptr<fossil_tofu_t> default_tofu(fossil_tofu_create_default());
+        if (!default_tofu) {
+            throw std::runtime_error("Failed to create default Tofu object");
+        }
+        Tofu tofu;
+        tofu.tofu_ = std::move(default_tofu);
+        return tofu;
+    }
+
+    static Tofu validate_type(const std::string& type_str) {
+        fossil_tofu_type_t type = fossil_tofu_validate_type(type_str.c_str());
+        if (type == FOSSIL_TOFU_FAILURE) {
+            throw std::runtime_error("Invalid type string");
+        }
+        return Tofu(fossil_tofu_type_name(type), "");
     }
 
 private:
-    /**
-     * @brief Internal C-style Tofu object managed by the wrapper.
-     */
-    fossil_tofu_t tofu_;
+    // Private constructor for internal use
+    Tofu() : tofu_(std::make_unique<fossil_tofu_t>()) {}
+
+    std::unique_ptr<fossil_tofu_t> tofu_;
 };
 
 } // namespace tofu
