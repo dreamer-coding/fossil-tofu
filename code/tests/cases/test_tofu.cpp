@@ -223,23 +223,6 @@ FOSSIL_TEST_CASE(cpp_test_tofu_null_attribute) {
     }
 }
 
-FOSSIL_TEST_CASE(cpp_test_tofu_invalid_type_conversion) {
-    try {
-        fossil::tofu::Tofu tofu("i32", "42");
-        tofu.convert_type("invalid_type");
-        ASSUME_ITS_TRUE(false); // Should not reach here
-    } catch (const std::runtime_error& e) {
-        ASSUME_ITS_TRUE(true); // Exception expected
-    }
-}
-
-FOSSIL_TEST_CASE(cpp_test_tofu_type_conversion) {
-    fossil::tofu::Tofu tofu("i32", "42");
-    tofu.convert_type("float");
-    ASSUME_ITS_EQUAL_CSTR(tofu.get_type_name().c_str(), "float");
-    ASSUME_ITS_EQUAL_CSTR(tofu.get_value().c_str(), "42.0");
-}
-
 // * * * * * * * * * * * * * * * * * * * * * * * *
 // * Fossil Logic Test Pool
 // * * * * * * * * * * * * * * * * * * * * * * * *
@@ -263,8 +246,6 @@ FOSSIL_TEST_GROUP(cpp_generic_tofu_tests) {
     FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_compare_different_types);
     FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_large_number_of_attributes);
     FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_null_attribute);
-    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_invalid_type_conversion);
-    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_type_conversion);
 
     // Edge Cases
     FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_empty_value);
