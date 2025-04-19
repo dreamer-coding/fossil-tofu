@@ -234,10 +234,8 @@ FOSSIL_TEST_CASE(c_test_stress_create_copy) {
 // * * * * * * * * * * * * * * * * * * * * * * * *
 FOSSIL_TEST_GROUP(c_generic_tofu_tests) {    
     // Generic ToFu Fixture
-    FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_create_destroy_i8);
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_create_destroy_u8);
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_create_destroy_float);
-    FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_create_destroy_double);
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_create_default);
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_create_copy);
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_create_move);
@@ -246,11 +244,6 @@ FOSSIL_TEST_GROUP(c_generic_tofu_tests) {
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_equals);
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_set_attribute);
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_get_attribute);
-    FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_set_get_mutable);
-    FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_set_get_value);
-    FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_set_get_attribute);
-
-    // Invalid cases
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_create_invalid_type);
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_create_null_value);
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_create_empty_type);
@@ -260,20 +253,9 @@ FOSSIL_TEST_GROUP(c_generic_tofu_tests) {
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_set_mutable_null_tofu);
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_equals_null_tofu);
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_destroy_null_tofu);
-
-    // Stress tests
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_stress_create_destroy);
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_stress_set_value);
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_stress_create_copy);
-    FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_stress_create_move);
-    FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_stress_set_get_value);
-    FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_stress_set_get_mutable);
-    FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_stress_set_get_attribute);
-    FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_stress_equals);
-    FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_stress_set_value_null);
-    FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_stress_set_value_large);
-    FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_stress_set_mutable_null_tofu);
-    FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_stress_equals_null_tofu);
 
     // Register the test group
     FOSSIL_TEST_REGISTER(c_generic_tofu_fixture);
