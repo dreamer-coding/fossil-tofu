@@ -222,21 +222,10 @@ FOSSIL_TEST_GROUP(cpp_generic_tofu_tests) {
     FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_set_get_attribute);
     FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_equals_operator);
     FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_get_type_info);
-    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_set_get_type);
-    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_set_invalid_type);
-    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_reset_value);
-    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_set_get_multiple_attributes);
-    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_compare_different_types);
-    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_large_number_of_attributes);
-    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_null_attribute);
-
-    // Edge Cases
     FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_empty_value);
     FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_large_value);
     FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_invalid_value);
     FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_null_value);
-
-    // Stress Tests
     FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_multiple_instances);
     FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_reset_value);
     FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_set_get_multiple_attributes);
