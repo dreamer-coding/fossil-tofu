@@ -307,6 +307,7 @@ char* fossil_tofu_strdup(const char* str);
 #include <iostream>
 #include <utility>
 #include <string>
+#include <vector>
 
 /**
  * @namespace fossil
