@@ -31,6 +31,7 @@
 #include "setof.h"
 #include "mapof.h"
 #include "clist.h"
+#include "xlist.h"
 #include "slist.h"
 #include "flist.h"
 #include "dlist.h"
