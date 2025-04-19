@@ -444,7 +444,7 @@ namespace fossil {
 
             static Tofu validate_type(const std::string& type_str) {
                 fossil_tofu_type_t type = fossil_tofu_validate_type(type_str.c_str());
-                if (type == FOSSIL_TOFU_FAILURE) {
+                if (type == FOSSIL_TOFU_TYPE_ANY) {
                     throw std::runtime_error("Invalid type string");
                 }
                 return Tofu(fossil_tofu_type_name(type), "");
