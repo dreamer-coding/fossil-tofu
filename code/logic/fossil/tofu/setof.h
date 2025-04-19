@@ -141,7 +141,7 @@ namespace tofu {
 
     /**
      * @class SetOf
-     * @brief A C++ wrapper class for managing a set of elements using the Fossil Logic library.
+     * @brief A C++ wrapper class for managing a set of Tofu elements using the Fossil Logic library.
      */
     class SetOf {
     public:
@@ -166,37 +166,37 @@ namespace tofu {
         }
 
         /**
-         * @brief Inserts a new element into the set.
+         * @brief Inserts a new Tofu element into the set.
          * 
-         * @param data The element to insert into the set.
+         * @param tofu The Tofu element to insert into the set.
          * @throws std::runtime_error If the insertion fails.
          */
-        void insert(const std::string& data) {
-            if (fossil_setof_insert(set_, const_cast<char*>(data.c_str())) != 0) {
-                throw std::runtime_error("Failed to insert data into set.");
+        void insert(const Tofu& tofu) {
+            if (fossil_setof_insert(set_, const_cast<char*>(tofu.get_value().c_str())) != 0) {
+                throw std::runtime_error("Failed to insert Tofu into set.");
             }
         }
 
         /**
-         * @brief Removes an element from the set.
+         * @brief Removes a Tofu element from the set.
          * 
-         * @param data The element to remove from the set.
+         * @param tofu The Tofu element to remove from the set.
          * @throws std::runtime_error If the removal fails.
          */
-        void remove(const std::string& data) {
-            if (fossil_setof_remove(set_, const_cast<char*>(data.c_str())) != 0) {
-                throw std::runtime_error("Failed to remove data from set.");
+        void remove(const Tofu& tofu) {
+            if (fossil_setof_remove(set_, const_cast<char*>(tofu.get_value().c_str())) != 0) {
+                throw std::runtime_error("Failed to remove Tofu from set.");
             }
         }
 
         /**
-         * @brief Checks if the set contains the specified element.
+         * @brief Checks if the set contains the specified Tofu element.
          * 
-         * @param data The element to check for.
-         * @return True if the set contains the element, false otherwise.
+         * @param tofu The Tofu element to check for.
+         * @return True if the set contains the Tofu element, false otherwise.
          */
-        bool contains(const std::string& data) const {
-            return fossil_setof_contains(set_, const_cast<char*>(data.c_str()));
+        bool contains(const Tofu& tofu) const {
+            return fossil_setof_contains(set_, const_cast<char*>(tofu.get_value().c_str()));
         }
 
         /**

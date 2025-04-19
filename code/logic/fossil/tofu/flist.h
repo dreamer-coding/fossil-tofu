@@ -248,7 +248,7 @@ namespace tofu {
 
     /**
      * @class FList
-     * @brief A C++ wrapper for the fossil_flist_t forward list using std::string.
+     * @brief A C++ wrapper for the fossil_flist_t forward list using the Tofu class.
      */
     class FList {
     public:
@@ -295,12 +295,12 @@ namespace tofu {
         }
     
         /**
-         * Insert data into the forward list.
+         * Insert a Tofu object into the forward list.
          *
-         * @param data The data to insert.
+         * @param tofu The Tofu object to insert.
          */
-        void insert(const std::string& data) {
-            fossil_flist_insert(flist, const_cast<char*>(data.c_str()));
+        void insert(const tofu::Tofu& tofu) {
+            fossil_flist_insert(flist, const_cast<char*>(tofu.get_value().c_str()));
         }
     
         /**
@@ -343,96 +343,59 @@ namespace tofu {
         }
     
         /**
-         * Check if the forward list is not a null pointer.
-         *
-         * @return True if the forward list is not a null pointer, false otherwise.
-         */
-        bool not_cnullptr() const {
-            return fossil_flist_not_cnullptr(flist);
-        }
-    
-        /**
-         * Check if the forward list is empty.
-         *
-         * @return True if the forward list is empty, false otherwise.
-         */
-        bool is_empty() const {
-            return fossil_flist_is_empty(flist);
-        }
-    
-        /**
-         * Check if the forward list is a null pointer.
-         *
-         * @return True if the forward list is a null pointer, false otherwise.
-         */
-        bool is_cnullptr() const {
-            return fossil_flist_is_cnullptr(flist);
-        }
-    
-        /**
-         * Get the element at the specified index in the forward list.
+         * Get the Tofu object at the specified index in the forward list.
          *
          * @param index The index of the element to get.
-         * @return      The element at the specified index as a string.
+         * @return      The Tofu object at the specified index.
          */
-        std::string get(size_t index) const {
-            return fossil_flist_get(flist, index);
+        tofu::Tofu get(size_t index) const {
+            return tofu::Tofu("type", fossil_flist_get(flist, index));
         }
 
         /**
-         * Get the first element in the forward list.
+         * Get the first Tofu object in the forward list.
          *
-         * @return The first element in the forward list as a string.
+         * @return The first Tofu object in the forward list.
          */
-        std::string front() const {
-            return fossil_flist_get_front(flist);
+        tofu::Tofu front() const {
+            return tofu::Tofu("type", fossil_flist_get_front(flist));
         }
 
         /**
-         * Get the last element in the forward list.
+         * Get the last Tofu object in the forward list.
          *
-         * @return The last element in the forward list as a string.
+         * @return The last Tofu object in the forward list.
          */
-        std::string back() const {
-            return fossil_flist_get_back(flist);
+        tofu::Tofu back() const {
+            return tofu::Tofu("type", fossil_flist_get_back(flist));
         }
 
         /**
-         * Set the element at the specified index in the forward list.
+         * Set the Tofu object at the specified index in the forward list.
          *
-         * @param index The index at which to set the element.
-         * @param value The element to set.
+         * @param index The index at which to set the Tofu object.
+         * @param tofu  The Tofu object to set.
          */
-        void set(size_t index, const std::string& value) {
-            fossil_flist_set(flist, index, const_cast<char*>(value.c_str()));
+        void set(size_t index, const tofu::Tofu& tofu) {
+            fossil_flist_set(flist, index, const_cast<char*>(tofu.get_value().c_str()));
         }
 
         /**
-         * Set the first element in the forward list.
+         * Set the first Tofu object in the forward list.
          *
-         * @param value The element to set.
+         * @param tofu The Tofu object to set.
          */
-        void set_front(const std::string& value) {
-            fossil_flist_set_front(flist, const_cast<char*>(value.c_str()));
+        void set_front(const tofu::Tofu& tofu) {
+            fossil_flist_set_front(flist, const_cast<char*>(tofu.get_value().c_str()));
         }
 
         /**
-         * Set the last element in the forward list.
+         * Set the last Tofu object in the forward list.
          *
-         * @param value The element to set.
+         * @param tofu The Tofu object to set.
          */
-        void set_back(const std::string& value) {
-            fossil_flist_set_back(flist, const_cast<char*>(value.c_str()));
-        }
-
-        std::string get_front() const {
-            const char* front = fossil_flist_get_front(flist);
-            return front ? std::string(front) : "";
-        }
-        
-        std::string get_back() const {
-            const char* back = fossil_flist_get_back(flist);
-            return back ? std::string(back) : "";
+        void set_back(const tofu::Tofu& tofu) {
+            fossil_flist_set_back(flist, const_cast<char*>(tofu.get_value().c_str()));
         }
 
         /**

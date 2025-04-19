@@ -218,8 +218,8 @@ namespace tofu {
              * @param type The expected type of elements in the tuple.
              * @throws std::runtime_error If the tuple creation fails.
              */
-            Tuple(char *type) {
-                tuple_ = fossil_tuple_create(type);
+            Tuple(const std::string& type) {
+                tuple_ = fossil_tuple_create(const_cast<char*>(type.c_str()));
                 if (!tuple_) {
                     throw std::runtime_error("Failed to create tuple.");
                 }
@@ -256,27 +256,27 @@ namespace tofu {
              * @param other The Tuple to move.
              * @throws std::runtime_error If the tuple creation fails.
              */
-            Tuple(Tuple&& other) {
+            Tuple(Tuple&& other) noexcept {
                 tuple_ = fossil_tuple_create_move(other.tuple_);
-                if (!tuple_) {
-                    throw std::runtime_error("Failed to create tuple.");
-                }
+                other.tuple_ = nullptr;
             }
 
             /**
              * @brief Destroys the Tuple and releases its resources.
              */
             ~Tuple() {
-                fossil_tuple_destroy(tuple_);
+                if (tuple_) {
+                    fossil_tuple_destroy(tuple_);
+                }
             }
 
             /**
-             * @brief Adds an element to the Tuple.
+             * @brief Adds a ToFu element to the Tuple.
              * 
-             * @param element The element to add.
+             * @param tofu The ToFu element to add.
              */
-            void add(char *element) {
-                fossil_tuple_add(tuple_, element);
+            void add(const Tofu& tofu) {
+                fossil_tuple_add(tuple_, const_cast<char*>(tofu.get_value().c_str()));
             }
 
             /**
@@ -323,59 +323,62 @@ namespace tofu {
             }
 
             /**
-             * @brief Gets the element at the specified index in the Tuple.
+             * @brief Gets the ToFu element at the specified index in the Tuple.
              * 
              * @param index The index of the element to get.
-             * @return The element at the specified index.
+             * @return The ToFu element at the specified index.
              */
-            char *get(size_t index) const {
-                return fossil_tuple_get(tuple_, index);
+            Tofu get(size_t index) const {
+                char* value = fossil_tuple_get(tuple_, index);
+                return Tofu(tuple_->type, value ? value : "");
             }
 
             /**
-             * @brief Gets the first element in the Tuple.
+             * @brief Gets the first ToFu element in the Tuple.
              * 
-             * @return The first element in the Tuple.
+             * @return The first ToFu element in the Tuple.
              */
-            char *get_front() const {
-                return fossil_tuple_get_front(tuple_);
+            Tofu get_front() const {
+                char* value = fossil_tuple_get_front(tuple_);
+                return Tofu(tuple_->type, value ? value : "");
             }
 
             /**
-             * @brief Gets the last element in the Tuple.
+             * @brief Gets the last ToFu element in the Tuple.
              * 
-             * @return The last element in the Tuple.
+             * @return The last ToFu element in the Tuple.
              */
-            char *get_back() const {
-                return fossil_tuple_get_back(tuple_);
+            Tofu get_back() const {
+                char* value = fossil_tuple_get_back(tuple_);
+                return Tofu(tuple_->type, value ? value : "");
             }
 
             /**
-             * @brief Sets the element at the specified index in the Tuple.
+             * @brief Sets the ToFu element at the specified index in the Tuple.
              * 
              * @param index The index at which to set the element.
-             * @param element The element to set.
+             * @param tofu The ToFu element to set.
              */
-            void set(size_t index, char *element) {
-                fossil_tuple_set(tuple_, index, element);
+            void set(size_t index, const Tofu& tofu) {
+                fossil_tuple_set(tuple_, index, const_cast<char*>(tofu.get_value().c_str()));
             }
 
             /**
-             * @brief Sets the first element in the Tuple.
+             * @brief Sets the first ToFu element in the Tuple.
              * 
-             * @param element The element to set.
+             * @param tofu The ToFu element to set.
              */
-            void set_front(char *element) {
-                fossil_tuple_set_front(tuple_, element);
+            void set_front(const Tofu& tofu) {
+                fossil_tuple_set_front(tuple_, const_cast<char*>(tofu.get_value().c_str()));
             }
 
             /**
-             * @brief Sets the last element in the Tuple.
+             * @brief Sets the last ToFu element in the Tuple.
              * 
-             * @param element The element to set.
+             * @param tofu The ToFu element to set.
              */
-            void set_back(char *element) {
-                fossil_tuple_set_back(tuple_, element);
+            void set_back(const Tofu& tofu) {
+                fossil_tuple_set_back(tuple_, const_cast<char*>(tofu.get_value().c_str()));
             }
 
         private:

@@ -197,7 +197,7 @@ void fossil_stack_set(fossil_stack_t* stack, size_t index, fossil_tofu_t element
 namespace fossil {
 
 namespace tofu {
-
+       
     /**
      * A C++ wrapper class for the fossil_stack_t structure, providing a more
      * user-friendly interface for stack operations.
@@ -250,13 +250,13 @@ namespace tofu {
             }
 
             /**
-             * Insert data into the stack.
+             * Insert data into the stack using the Tofu class.
              *
-             * @param data The data to insert.
+             * @param tofu The Tofu object containing the data to insert.
              * @return     The error code indicating the success or failure of the operation.
              */
-            int32_t insert(const std::string& data) {
-                return fossil_stack_insert(stack_, const_cast<char*>(data.c_str()));
+            int32_t insert(const Tofu& tofu) {
+                return fossil_stack_insert(stack_, const_cast<char*>(tofu.get_value().c_str()));
             }
 
             /**
@@ -314,32 +314,32 @@ namespace tofu {
             }
 
             /**
-             * Get the top element of the stack.
+             * Get the top element of the stack as a Tofu object.
              *
-             * @return The top element of the stack or the default value if the stack is empty.
+             * @return The top element of the stack or a default Tofu object if the stack is empty.
              */
-            fossil_tofu_t top() {
-                return fossil_stack_top(stack_);
+            Tofu top() {
+                return Tofu("default", fossil_stack_top(stack_).value);
             }
 
             /**
-             * Get the element at the specified index in the stack.
+             * Get the element at the specified index in the stack as a Tofu object.
              *
              * @param index The index of the element to get.
-             * @return      The element at the specified index.
+             * @return      The element at the specified index as a Tofu object.
              */
-            fossil_tofu_t get(size_t index) const {
-                return fossil_stack_get(stack_, index);
+            Tofu get(size_t index) const {
+                return Tofu("default", fossil_stack_get(stack_, index).value);
             }
 
             /**
-             * Set the element at the specified index in the stack.
+             * Set the element at the specified index in the stack using a Tofu object.
              *
              * @param index   The index at which to set the element.
-             * @param element The element to set.
+             * @param tofu    The Tofu object containing the element to set.
              */
-            void set(size_t index, fossil_tofu_t element) {
-                fossil_stack_set(stack_, index, element);
+            void set(size_t index, const Tofu& tofu) {
+                fossil_stack_set(stack_, index, fossil_tofu_t{const_cast<char*>(tofu.get_value().c_str()), nullptr});
             }
 
         private:

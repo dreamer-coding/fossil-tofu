@@ -210,7 +210,7 @@ namespace tofu {
          * @param type The type of data the skip list will store.
          * @throws std::runtime_error If the list creation fails.
          */
-        SList(char* type) : slist(fossil_slist_create_container(type)) {
+        SList(const std::string& type) : slist(fossil_slist_create_container(const_cast<char*>(type.c_str()))) {
             if (slist == nullptr) {
                 throw std::runtime_error("Failed to create skip list.");
             }
@@ -235,23 +235,23 @@ namespace tofu {
         }
 
         /**
-         * Insert data into the skip list.
+         * Insert a Tofu object into the skip list.
          *
-         * @param data The data to insert.
+         * @param tofu The Tofu object to insert.
          * @return     The error code indicating the success or failure of the operation.
          */
-        int32_t insert(char *data) {
-            return fossil_slist_insert(slist, data);
+        int32_t insert(const Tofu& tofu) {
+            return fossil_slist_insert(slist, const_cast<char*>(tofu.get_value().c_str()));
         }
 
         /**
-         * Remove data from the skip list.
+         * Remove a Tofu object from the skip list.
          *
-         * @param data The data to remove.
+         * @param tofu The Tofu object to remove.
          * @return     The error code indicating the success or failure of the operation.
          */
-        int32_t remove(char *data) {
-            return fossil_slist_remove(slist, data);
+        int32_t remove(const Tofu& tofu) {
+            return fossil_slist_remove(slist, const_cast<char*>(tofu.get_value().c_str()));
         }
 
         /**
@@ -273,15 +273,6 @@ namespace tofu {
         }
 
         /**
-         * Check if the skip list is not a null pointer.
-         *
-         * @return True if the skip list is not a null pointer, false otherwise.
-         */
-        bool not_cnullptr() const {
-            return fossil_slist_not_cnullptr(slist);
-        }
-
-        /**
          * Check if the skip list is empty.
          *
          * @return True if the skip list is empty, false otherwise.
@@ -291,45 +282,47 @@ namespace tofu {
         }
 
         /**
-         * Check if the skip list is a null pointer.
+         * Search for a Tofu object in the skip list.
          *
-         * @return True if the skip list is a null pointer, false otherwise.
+         * @param tofu The Tofu object to search for.
+         * @return     The Tofu object found or a default-constructed Tofu if not found.
          */
-        bool is_cnullptr() const {
-            return fossil_slist_is_cnullptr(slist);
+        Tofu search(const Tofu& tofu) const {
+            char* result = fossil_slist_search(slist, const_cast<char*>(tofu.get_value().c_str()));
+            if (result) {
+                return Tofu(tofu.get_type_name(), result);
+            }
+            return Tofu::create_default();
         }
 
         /**
-         * Search for an element in the skip list.
+         * Get the first Tofu object in the skip list.
          *
-         * @param key The key to search for.
-         * @return    The element found or NULL if not found.
+         * @return The first Tofu object in the skip list.
          */
-        char *search(char *key) const {
-            return fossil_slist_search(slist, key);
+        Tofu get_front() const {
+            char* result = fossil_slist_get_front(slist);
+            if (result) {
+                return Tofu("", result); // Type is unknown here
+            }
+            return Tofu::create_default();
         }
 
         /**
-         * Get the first element in the skip list.
+         * Get the last Tofu object in the skip list.
          *
-         * @return The first element in the skip list.
+         * @return The last Tofu object in the skip list.
          */
-        char *get_front() const {
-            return fossil_slist_get_front(slist);
-        }
-
-        /**
-         * Get the last element in the skip list.
-         *
-         * @return The last element in the skip list.
-         */
-        char *get_back() const {
-            return fossil_slist_get_back(slist);
+        Tofu get_back() const {
+            char* result = fossil_slist_get_back(slist);
+            if (result) {
+                return Tofu("", result); // Type is unknown here
+            }
+            return Tofu::create_default();
         }
 
     private:
         fossil_slist_t* slist; /**< Pointer to the skip list */
-
     };
 
 } // namespace tofu

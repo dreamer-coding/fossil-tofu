@@ -315,14 +315,15 @@ namespace tofu {
         }
 
         /**
-         * Inserts data into the queue.
+         * Inserts a Tofu object into the queue.
          * 
-         * @param data The data to insert.
+         * @param tofu The Tofu object to insert.
          * @throws std::runtime_error if the insertion fails.
          */
-        void insert(char *data) {
-            if (fossil_dqueue_insert(dqueue, data) != 0) {
-                throw std::runtime_error("Failed to insert data into the double-ended queue.");
+        void insert(const Tofu& tofu) {
+            std::string value = tofu.get_value();
+            if (fossil_dqueue_insert(dqueue, const_cast<char*>(value.c_str())) != 0) {
+                throw std::runtime_error("Failed to insert Tofu object into the double-ended queue.");
             }
         }
 
@@ -356,86 +357,43 @@ namespace tofu {
         }
 
         /**
-         * Checks if the queue is not a null pointer.
+         * Gets the Tofu object at the specified index in the queue.
          * 
-         * @return True if the queue is not a null pointer, false otherwise.
+         * @param index The index of the Tofu object to get.
+         * @return The Tofu object at the specified index.
          */
-        bool not_cnullptr() const {
-            return fossil_dqueue_not_cnullptr(dqueue);
+        Tofu get(size_t index) const {
+            char* data = fossil_dqueue_get(dqueue, index);
+            if (!data) {
+                throw std::runtime_error("Failed to get Tofu object from the double-ended queue.");
+            }
+            return Tofu("cstr", std::string(data));
         }
 
         /**
-         * Checks if the queue is empty.
+         * Gets the first Tofu object in the queue.
          * 
-         * @return True if the queue is empty, false otherwise.
+         * @return The first Tofu object in the queue.
          */
-        bool is_empty() const {
-            return fossil_dqueue_is_empty(dqueue);
+        Tofu get_front() const {
+            char* data = fossil_dqueue_get_front(dqueue);
+            if (!data) {
+                throw std::runtime_error("Failed to get the first Tofu object from the double-ended queue.");
+            }
+            return Tofu("cstr", std::string(data));
         }
 
         /**
-         * Checks if the queue is a null pointer.
+         * Gets the last Tofu object in the queue.
          * 
-         * @return True if the queue is a null pointer, false otherwise.
+         * @return The last Tofu object in the queue.
          */
-        bool is_cnullptr() const {
-            return fossil_dqueue_is_cnullptr(dqueue);
-        }
-
-        /**
-         * Gets the element at the specified index in the queue.
-         * 
-         * @param index The index of the element to get.
-         * @return The element at the specified index.
-         */
-        char *get(size_t index) const {
-            return fossil_dqueue_get(dqueue, index);
-        }
-
-        /**
-         * Gets the first element in the queue.
-         * 
-         * @return The first element in the queue.
-         */
-        char *get_front() const {
-            return fossil_dqueue_get_front(dqueue);
-        }
-
-        /**
-         * Gets the last element in the queue.
-         * 
-         * @return The last element in the queue.
-         */
-        char *get_back() const {
-            return fossil_dqueue_get_back(dqueue);
-        }
-
-        /**
-         * Sets the element at the specified index in the queue.
-         * 
-         * @param index   The index at which to set the element.
-         * @param element The element to set.
-         */
-        void set(size_t index, char *element) {
-            fossil_dqueue_set(dqueue, index, element);
-        }
-
-        /**
-         * Sets the first element in the queue.
-         * 
-         * @param element The element to set.
-         */
-        void set_front(char *element) {
-            fossil_dqueue_set_front(dqueue, element);
-        }
-
-        /**
-         * Sets the last element in the queue.
-         * 
-         * @param element The element to set.
-         */
-        void set_back(char *element) {
-            fossil_dqueue_set_back(dqueue, element);
+        Tofu get_back() const {
+            char* data = fossil_dqueue_get_back(dqueue);
+            if (!data) {
+                throw std::runtime_error("Failed to get the last Tofu object from the double-ended queue.");
+            }
+            return Tofu("cstr", std::string(data));
         }
 
     private:

@@ -255,7 +255,7 @@ namespace tofu {
          * @param type The type of data the doubly linked list will store.
          * @throws std::runtime_error If the list creation fails.
          */
-        DList(char* type) : dlist(fossil_dlist_create_container(type)) {
+        DList(const std::string& type) : dlist(fossil_dlist_create_container(const_cast<char*>(type.c_str()))) {
             if (dlist == nullptr) {
                 throw std::runtime_error("Failed to create doubly linked list.");
             }
@@ -292,7 +292,7 @@ namespace tofu {
          */
         DList(DList&& other) : dlist(fossil_dlist_create_move(other.dlist)) {
             if (dlist == nullptr) {
-            throw std::runtime_error("Failed to create doubly linked list.");
+                throw std::runtime_error("Failed to create doubly linked list.");
             }
         }
 
@@ -304,13 +304,14 @@ namespace tofu {
         }
 
         /**
-         * Insert data into the doubly linked list.
+         * Insert a Tofu object into the doubly linked list.
          *
-         * @param data The data to insert.
+         * @param tofu The Tofu object to insert.
          * @return     The error code indicating the success or failure of the operation.
          */
-        int32_t insert(char *data) {
-            return fossil_dlist_insert(dlist, data);
+        int32_t insert(const Tofu& tofu) {
+            std::string value = tofu.get_value();
+            return fossil_dlist_insert(dlist, const_cast<char*>(value.c_str()));
         }
 
         /**
@@ -355,86 +356,74 @@ namespace tofu {
         }
 
         /**
-         * Check if the doubly linked list is not a null pointer.
-         *
-         * @return True if the doubly linked list is not a null pointer, false otherwise.
-         */
-        bool not_cnullptr() const {
-            return fossil_dlist_not_cnullptr(dlist);
-        }
-
-        /**
-         * Check if the doubly linked list is empty.
-         *
-         * @return True if the doubly linked list is empty, false otherwise.
-         */
-        bool is_empty() const {
-            return fossil_dlist_is_empty(dlist);
-        }
-
-        /**
-         * Check if the doubly linked list is a null pointer.
-         *
-         * @return True if the doubly linked list is a null pointer, false otherwise.
-         */
-        bool is_cnullptr() const {
-            return fossil_dlist_is_cnullptr(dlist);
-        }
-
-        /**
-         * Get the element at the specified index in the doubly linked list.
+         * Get the Tofu object at the specified index in the doubly linked list.
          *
          * @param index The index of the element to get.
-         * @return      The element at the specified index.
+         * @return      The Tofu object at the specified index.
          */
-        char *get(size_t index) const {
-            return fossil_dlist_get(dlist, index);
+        Tofu get(size_t index) const {
+            char* value = fossil_dlist_get(dlist, index);
+            if (value == nullptr) {
+                throw std::runtime_error("Failed to get element at index.");
+            }
+            return Tofu("cstr", value);
         }
 
         /**
-         * Get the first element in the doubly linked list.
+         * Get the first Tofu object in the doubly linked list.
          *
-         * @return The first element in the doubly linked list.
+         * @return The first Tofu object in the doubly linked list.
          */
-        char *get_front() const {
-            return fossil_dlist_get_front(dlist);
+        Tofu get_front() const {
+            char* value = fossil_dlist_get_front(dlist);
+            if (value == nullptr) {
+                throw std::runtime_error("Failed to get front element.");
+            }
+            return Tofu("cstr", value);
         }
 
         /**
-         * Get the last element in the doubly linked list.
+         * Get the last Tofu object in the doubly linked list.
          *
-         * @return The last element in the doubly linked list.
+         * @return The last Tofu object in the doubly linked list.
          */
-        char *get_back() const {
-            return fossil_dlist_get_back(dlist);
+        Tofu get_back() const {
+            char* value = fossil_dlist_get_back(dlist);
+            if (value == nullptr) {
+                throw std::runtime_error("Failed to get back element.");
+            }
+            return Tofu("cstr", value);
         }
 
         /**
-         * Set the element at the specified index in the doubly linked list.
+         * Set a Tofu object at the specified index in the doubly linked list.
          *
-         * @param index   The index at which to set the element.
-         * @param element The element to set.
+         * @param index The index at which to set the element.
+         * @param tofu  The Tofu object to set.
          */
-        void set(size_t index, char *element) {
-            fossil_dlist_set(dlist, index, element);
+        void set(size_t index, const Tofu& tofu) {
+            std::string value = tofu.get_value();
+            fossil_dlist_set(dlist, index, const_cast<char*>(value.c_str()));
         }
 
         /**
-         * Set the first element in the doubly linked list.
+         * Set the first Tofu object in the doubly linked list.
          *
-         * @param element The element to set.
+         * @param tofu The Tofu object to set.
          */
-        void set_front(char *element) {
-            fossil_dlist_set_front(dlist, element);
+        void set_front(const Tofu& tofu) {
+            std::string value = tofu.get_value();
+            fossil_dlist_set_front(dlist, const_cast<char*>(value.c_str()));
         }
 
         /**
-         * Set the last element in the doubly linked list.
+         * Set the last Tofu object in the doubly linked list.
          *
-         * @param element The element to set.
+         * @param tofu The Tofu object to set.
          */
-        void set_back(char *element) {
-            fossil_dlist_set_back(dlist, element);
+        void set_back(const Tofu& tofu) {
+            std::string value = tofu.get_value();
+            fossil_dlist_set_back(dlist, const_cast<char*>(value.c_str()));
         }
 
     private:

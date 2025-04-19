@@ -179,8 +179,8 @@ namespace tofu {
          * @param key_type The type of the keys.
          * @param value_type The type of the values.
          */
-        MapOf(char* key_type, char* value_type) {
-            map = fossil_mapof_create_container(key_type, value_type);
+        MapOf(const std::string& key_type, const std::string& value_type) {
+            map = fossil_mapof_create_container(const_cast<char*>(key_type.c_str()), const_cast<char*>(value_type.c_str()));
             if (map == nullptr) {
                 throw std::runtime_error("Failed to create map container");
             }
@@ -213,18 +213,18 @@ namespace tofu {
          *
          * @param other The MapOf object to move.
          */
-        MapOf(MapOf&& other) {
+        MapOf(MapOf&& other) noexcept {
             map = fossil_mapof_create_move(other.map);
-            if (map == nullptr) {
-                throw std::runtime_error("Failed to create map container");
-            }
+            other.map = nullptr;
         }
 
         /**
          * @brief Destroy the MapOf object and free its memory.
          */
         ~MapOf() {
-            fossil_mapof_destroy(map);
+            if (map) {
+                fossil_mapof_destroy(map);
+            }
         }
 
         /**
@@ -234,8 +234,8 @@ namespace tofu {
          * @param value The value to insert.
          * @return 0 on success, non-zero on failure.
          */
-        int32_t insert(char *key, char *value) {
-            return fossil_mapof_insert(map, key, value);
+        int32_t insert(const Tofu& key, const Tofu& value) {
+            return fossil_mapof_insert(map, const_cast<char*>(key.get_value().c_str()), const_cast<char*>(value.get_value().c_str()));
         }
 
         /**
@@ -244,8 +244,8 @@ namespace tofu {
          * @param key The key to remove.
          * @return 0 on success, non-zero on failure.
          */
-        int32_t remove(char *key) {
-            return fossil_mapof_remove(map, key);
+        int32_t remove(const Tofu& key) {
+            return fossil_mapof_remove(map, const_cast<char*>(key.get_value().c_str()));
         }
 
         /**
@@ -254,18 +254,19 @@ namespace tofu {
          * @param key The key to check.
          * @return True if the key is found, false otherwise.
          */
-        bool contains(char *key) {
-            return fossil_mapof_contains(map, key);
+        bool contains(const Tofu& key) {
+            return fossil_mapof_contains(map, const_cast<char*>(key.get_value().c_str()));
         }
 
         /**
          * @brief Get the value associated with a key in the map.
          *
          * @param key The key to look up.
-         * @return The value associated with the key.
+         * @return The value associated with the key as a Tofu object.
          */
-        fossil_tofu_t get(char *key) {
-            return fossil_mapof_get(map, key);
+        Tofu get(const Tofu& key) {
+            fossil_tofu_t value = fossil_mapof_get(map, const_cast<char*>(key.get_value().c_str()));
+            return Tofu(value.type_name, value.value);
         }
 
         /**
@@ -275,8 +276,8 @@ namespace tofu {
          * @param value The value to set.
          * @return 0 on success, non-zero on failure.
          */
-        int32_t set(char *key, char *value) {
-            return fossil_mapof_set(map, key, value);
+        int32_t set(const Tofu& key, const Tofu& value) {
+            return fossil_mapof_set(map, const_cast<char*>(key.get_value().c_str()), const_cast<char*>(value.get_value().c_str()));
         }
 
         /**
@@ -284,7 +285,7 @@ namespace tofu {
          *
          * @return The number of elements in the map.
          */
-        size_t size() {
+        size_t size() const {
             return fossil_mapof_size(map);
         }
 
@@ -293,7 +294,7 @@ namespace tofu {
          *
          * @return True if the map is not empty, false otherwise.
          */
-        bool not_empty() {
+        bool not_empty() const {
             return fossil_mapof_not_empty(map);
         }
 
@@ -302,7 +303,7 @@ namespace tofu {
          *
          * @return True if the map is empty, false otherwise.
          */
-        bool is_empty() {
+        bool is_empty() const {
             return fossil_mapof_is_empty(map);
         }
 

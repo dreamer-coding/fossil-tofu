@@ -263,13 +263,13 @@ namespace tofu {
         }
 
         /**
-         * Insert data into the queue.
+         * Insert a Tofu object into the queue.
          *
-         * @param data The data to insert.
+         * @param tofu The Tofu object to insert.
          * @return     The error code indicating the success or failure of the operation.
          */
-        int32_t insert(const std::string& data) {
-            return fossil_queue_insert(queue, const_cast<char*>(data.c_str()));
+        int32_t insert(const tofu::Tofu& tofu) {
+            return fossil_queue_insert(queue, const_cast<char*>(tofu.get_value().c_str()));
         }
 
         /**
@@ -300,15 +300,6 @@ namespace tofu {
         }
 
         /**
-         * Check if the queue is not a null pointer.
-         *
-         * @return True if the queue is not a null pointer, false otherwise.
-         */
-        bool not_cnullptr() const {
-            return fossil_queue_not_cnullptr(queue);
-        }
-
-        /**
          * Check if the queue is empty.
          *
          * @return True if the queue is empty, false otherwise.
@@ -318,50 +309,47 @@ namespace tofu {
         }
 
         /**
-         * Check if the queue is a null pointer.
+         * Get the Tofu object at the front of the queue.
          *
-         * @return True if the queue is a null pointer, false otherwise.
+         * @return The Tofu object at the front of the queue.
          */
-        bool is_cnullptr() const {
-            return fossil_queue_is_cnullptr(queue);
-        }
-
-        /**
-         * Get the element at the front of the queue.
-         *
-         * @return The element at the front of the queue.
-         */
-        std::string get_front() const {
+        tofu::Tofu get_front() const {
             char* front = fossil_queue_get_front(queue);
-            return front ? std::string(front) : std::string();
+            if (!front) {
+                throw std::runtime_error("Queue is empty.");
+            }
+            return tofu::Tofu("front_type", std::string(front));
         }
 
         /**
-         * Get the element at the rear of the queue.
+         * Get the Tofu object at the rear of the queue.
          *
-         * @return The element at the rear of the queue.
+         * @return The Tofu object at the rear of the queue.
          */
-        std::string get_rear() const {
+        tofu::Tofu get_rear() const {
             char* rear = fossil_queue_get_rear(queue);
-            return rear ? std::string(rear) : std::string();
+            if (!rear) {
+                throw std::runtime_error("Queue is empty.");
+            }
+            return tofu::Tofu("rear_type", std::string(rear));
         }
 
         /**
-         * Set the element at the front of the queue.
+         * Set the Tofu object at the front of the queue.
          *
-         * @param element The element to set at the front.
+         * @param tofu The Tofu object to set at the front.
          */
-        void set_front(const std::string& element) {
-            fossil_queue_set_front(queue, const_cast<char*>(element.c_str()));
+        void set_front(const tofu::Tofu& tofu) {
+            fossil_queue_set_front(queue, const_cast<char*>(tofu.get_value().c_str()));
         }
 
         /**
-         * Set the element at the rear of the queue.
+         * Set the Tofu object at the rear of the queue.
          *
-         * @param element The element to set at the rear.
+         * @param tofu The Tofu object to set at the rear.
          */
-        void set_rear(const std::string& element) {
-            fossil_queue_set_rear(queue, const_cast<char*>(element.c_str()));
+        void set_rear(const tofu::Tofu& tofu) {
+            fossil_queue_set_rear(queue, const_cast<char*>(tofu.get_value().c_str()));
         }
 
     private:

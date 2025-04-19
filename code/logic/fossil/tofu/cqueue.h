@@ -218,8 +218,8 @@ namespace tofu {
          *
          * @param type The type of data the queue will store.
          */
-        CQueue(char* type, size_t capacity) {
-            queue = fossil_cqueue_create_container(type, capacity);
+        CQueue(const std::string& type, size_t capacity) {
+            queue = fossil_cqueue_create_container(const_cast<char*>(type.c_str()), capacity);
             if (queue == nullptr) {
                 throw std::runtime_error("Failed to create circular queue.");
             }
@@ -267,11 +267,12 @@ namespace tofu {
         /**
          * Insert data into the circular queue.
          *
-         * @param data The data to insert.
+         * @param tofu The Tofu object to insert.
          * @return     The error code indicating the success or failure of the operation.
          */
-        int32_t insert(char *data) {
-            return fossil_cqueue_insert(queue, data);
+        int32_t insert(const Tofu& tofu) {
+            std::string value = tofu.get_value();
+            return fossil_cqueue_insert(queue, const_cast<char*>(value.c_str()));
         }
 
         /**
@@ -302,15 +303,6 @@ namespace tofu {
         }
 
         /**
-         * Check if the circular queue is not a null pointer.
-         *
-         * @return True if the circular queue is not a null pointer, false otherwise.
-         */
-        bool not_cnullptr() const {
-            return fossil_cqueue_not_cnullptr(queue);
-        }
-
-        /**
          * Check if the circular queue is empty.
          *
          * @return True if the circular queue is empty, false otherwise.
@@ -320,48 +312,49 @@ namespace tofu {
         }
 
         /**
-         * Check if the circular queue is a null pointer.
+         * Get the element at the front of the circular queue as a Tofu object.
          *
-         * @return True if the circular queue is a null pointer, false otherwise.
+         * @return The Tofu object at the front of the circular queue.
          */
-        bool is_cnullptr() const {
-            return fossil_cqueue_is_cnullptr(queue);
+        Tofu get_front() const {
+            char* front = fossil_cqueue_get_front(queue);
+            if (front == nullptr) {
+                throw std::runtime_error("Failed to get front element.");
+            }
+            return Tofu("cstr", front);
         }
 
         /**
-         * Get the element at the front of the circular queue.
+         * Get the element at the rear of the circular queue as a Tofu object.
          *
-         * @return The element at the front of the circular queue.
+         * @return The Tofu object at the rear of the circular queue.
          */
-        char *get_front() const {
-            return fossil_cqueue_get_front(queue);
-        }
-
-        /**
-         * Get the element at the rear of the circular queue.
-         *
-         * @return The element at the rear of the circular queue.
-         */
-        char *get_rear() const {
-            return fossil_cqueue_get_rear(queue);
+        Tofu get_rear() const {
+            char* rear = fossil_cqueue_get_rear(queue);
+            if (rear == nullptr) {
+                throw std::runtime_error("Failed to get rear element.");
+            }
+            return Tofu("cstr", rear);
         }
 
         /**
          * Set the element at the front of the circular queue.
          *
-         * @param element The element to set at the front.
+         * @param tofu The Tofu object to set at the front.
          */
-        void set_front(char *element) {
-            fossil_cqueue_set_front(queue, element);
+        void set_front(const Tofu& tofu) {
+            std::string value = tofu.get_value();
+            fossil_cqueue_set_front(queue, const_cast<char*>(value.c_str()));
         }
 
         /**
          * Set the element at the rear of the circular queue.
          *
-         * @param element The element to set at the rear.
+         * @param tofu The Tofu object to set at the rear.
          */
-        void set_rear(char *element) {
-            fossil_cqueue_set_rear(queue, element);
+        void set_rear(const Tofu& tofu) {
+            std::string value = tofu.get_value();
+            fossil_cqueue_set_rear(queue, const_cast<char*>(value.c_str()));
         }
 
     private:

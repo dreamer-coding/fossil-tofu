@@ -154,7 +154,8 @@ void fossil_clist_set_back(fossil_clist_t* clist, char *element);
 #include <stdexcept>  // For exceptions
 
 namespace fossil {
-namespace tofu {
+
+    namespace tofu {
 
 class CList {
 private:
@@ -164,10 +165,8 @@ public:
     // Constructor to create a circular linked list with a specific data type.
     // Throws an exception if creation fails.
     explicit CList(const std::string& type) {
-        // Create the list container with the given type.
         clist_ = fossil_clist_create_container(const_cast<char*>(type.c_str()));
         if (!clist_) {
-            // If creation failed, throw an exception.
             throw std::runtime_error("Failed to create circular linked list");
         }
     }
@@ -175,10 +174,8 @@ public:
     // Default constructor for creating an empty circular linked list.
     // Throws an exception if creation fails.
     CList() {
-        // Create the default list container.
         clist_ = fossil_clist_create_default();
         if (!clist_) {
-            // If creation failed, throw an exception.
             throw std::runtime_error("Failed to create circular linked list");
         }
     }
@@ -186,140 +183,90 @@ public:
     // Copy constructor: Creates a new list as a copy of another list.
     // Throws an exception if copy creation fails.
     CList(const CList& other) {
-        // Create a copy of the other list.
         clist_ = fossil_clist_create_copy(other.clist_);
         if (!clist_) {
-            // If copy creation failed, throw an exception.
             throw std::runtime_error("Failed to copy circular linked list");
         }
     }
 
     // Move constructor: Transfers ownership of resources from another list to this one.
-    // The other list is left in a valid but empty state.
     CList(CList&& other) noexcept {
-        // Steal the list container from the other list.
         clist_ = fossil_clist_create_move(other.clist_);
-        // Set the other list's pointer to null, so it no longer owns the list.
         other.clist_ = nullptr;
     }
 
     // Destructor: Destroys the circular linked list and frees its memory.
     ~CList() {
         if (clist_) {
-            // If the list is not null, destroy it and release resources.
             fossil_clist_destroy(clist_);
         }
     }
 
-    // Insert a new element into the circular linked list.
-    // Returns an integer status code (0 for success, non-zero for failure).
-    int insert(const std::string& data) {
-        // Insert the element into the list. Returns 0 if successful.
-        return fossil_clist_insert(clist_, const_cast<char*>(data.c_str()));
+    // Insert a new Tofu object into the circular linked list.
+    int insert(const tofu::Tofu& tofu) {
+        return fossil_clist_insert(clist_, const_cast<char*>(tofu.get_value().c_str()));
     }
 
     // Remove an element from the circular linked list.
-    // Returns an integer status code (0 for success, non-zero for failure).
     int remove() {
-        // Remove an element from the list. Returns 0 if successful.
         return fossil_clist_remove(clist_);
     }
 
     // Reverse the order of elements in the circular linked list.
     void reverse() {
-        // Call the C API function to reverse the list.
         fossil_clist_reverse(clist_);
     }
 
     // Return the number of elements in the circular linked list.
     size_t size() const {
-        // Call the C API function to get the size.
         return fossil_clist_size(clist_);
     }
 
     // Check if the circular linked list is not empty.
-    // Returns true if the list is not empty, false if it is empty.
     bool not_empty() const {
-        // Check if the list has elements.
         return fossil_clist_not_empty(clist_);
     }
 
-    // Check if the circular linked list is not a null pointer.
-    // Returns true if the list is valid, false if it is null.
-    bool not_cnullptr() const {
-        // Check if the list is not a nullptr.
-        return fossil_clist_not_cnullptr(clist_);
-    }
-
-    // Check if the circular linked list is empty.
-    // Returns true if the list is empty, false if it has elements.
-    bool is_empty() const {
-        // Check if the list is empty.
-        return fossil_clist_is_empty(clist_);
-    }
-
-    // Check if the circular linked list is a null pointer.
-    // Returns true if the list is null, false if it is valid.
-    bool is_cnullptr() const {
-        // Check if the list is a nullptr.
-        return fossil_clist_is_cnullptr(clist_);
-    }
-
-    // Get the element at the specified index in the circular linked list.
-    // Throws an exception if the index is out of range.
-    std::string get(size_t index) const {
-        // Retrieve the element at the specified index.
+    // Get the Tofu object at the specified index in the circular linked list.
+    tofu::Tofu get(size_t index) const {
         char* result = fossil_clist_get(clist_, index);
         if (result) {
-            // Return the element as a string.
-            return std::string(result);
+            return tofu::Tofu("cstr", std::string(result));
         }
-        // If the element does not exist (invalid index), throw an exception.
         throw std::out_of_range("Index out of range");
     }
 
-    // Get the first element in the circular linked list.
-    // Throws an exception if the list is empty or retrieval fails.
-    std::string get_front() const {
-        // Retrieve the front element of the list.
+    // Get the first Tofu object in the circular linked list.
+    tofu::Tofu get_front() const {
         char* result = fossil_clist_get_front(clist_);
         if (result) {
-            // Return the front element as a string.
-            return std::string(result);
+            return tofu::Tofu("cstr", std::string(result));
         }
-        // If the front element does not exist, throw an exception.
         throw std::runtime_error("Failed to get front element");
     }
 
-    // Get the last element in the circular linked list.
-    // Throws an exception if the list is empty or retrieval fails.
-    std::string get_back() const {
-        // Retrieve the back element of the list.
+    // Get the last Tofu object in the circular linked list.
+    tofu::Tofu get_back() const {
         char* result = fossil_clist_get_back(clist_);
         if (result) {
-            // Return the back element as a string.
-            return std::string(result);
+            return tofu::Tofu("cstr", std::string(result));
         }
-        // If the back element does not exist, throw an exception.
         throw std::runtime_error("Failed to get back element");
     }
 
-    // Set the element at the specified index in the circular linked list.
-    void set(size_t index, const std::string& element) {
-        // Set the element at the specified index in the list.
-        fossil_clist_set(clist_, index, const_cast<char*>(element.c_str()));
+    // Set the Tofu object at the specified index in the circular linked list.
+    void set(size_t index, const tofu::Tofu& tofu) {
+        fossil_clist_set(clist_, index, const_cast<char*>(tofu.get_value().c_str()));
     }
 
-    // Set the first element in the circular linked list.
-    void set_front(const std::string& element) {
-        // Set the front element of the list.
-        fossil_clist_set_front(clist_, const_cast<char*>(element.c_str()));
+    // Set the first Tofu object in the circular linked list.
+    void set_front(const tofu::Tofu& tofu) {
+        fossil_clist_set_front(clist_, const_cast<char*>(tofu.get_value().c_str()));
     }
 
-    // Set the last element in the circular linked list.
-    void set_back(const std::string& element) {
-        // Set the back element of the list.
-        fossil_clist_set_back(clist_, const_cast<char*>(element.c_str()));
+    // Set the last Tofu object in the circular linked list.
+    void set_back(const tofu::Tofu& tofu) {
+        fossil_clist_set_back(clist_, const_cast<char*>(tofu.get_value().c_str()));
     }
 };
 
