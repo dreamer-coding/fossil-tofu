@@ -17,26 +17,6 @@
 #include <string.h>
 
 // *****************************************************************************
-// Type definitions
-// *****************************************************************************
-
-// Node structure for the xlist
-typedef struct fossil_xlist_node_t {
-    fossil_tofu_t data;
-    struct fossil_xlist_node_t* prev;
-    struct fossil_xlist_node_t* next;
-    struct fossil_xlist_node_t* up;
-    struct fossil_xlist_node_t* down;
-} fossil_xlist_node_t;
-
-// Xlist structure
-typedef struct fossil_xlist_t {
-    fossil_xlist_node_t* head;
-    fossil_xlist_node_t* tail;
-    char* type;
-} fossil_xlist_t;
-
-// *****************************************************************************
 // Function prototypes
 // *****************************************************************************
 
