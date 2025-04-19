@@ -145,7 +145,7 @@ namespace tofu {
          * @return A negative value if tofu1 < tofu2, 0 if tofu1 == tofu2, or a positive value if tofu1 > tofu2.
          */
         static int compare(const Tofu& tofu1, const Tofu& tofu2) {
-            return fossil_algorithm_compare(tofu1.tofu_.get(), tofu2.tofu_.get());
+            return fossil_algorithm_compare(tofu1.tofu_.get_value(), tofu2.tofu_.get_value());
         }
 
         /**
@@ -158,9 +158,9 @@ namespace tofu {
         static int search(const std::vector<Tofu>& array, const Tofu& tofu) {
             std::vector<fossil_tofu_t*> raw_array;
             for (const auto& item : array) {
-                raw_array.push_back(item.tofu_.get());
+                raw_array.push_back(item.tofu_.get_value());
             }
-            return fossil_algorithm_search(raw_array.data(), raw_array.size(), tofu.tofu_.get());
+            return fossil_algorithm_search(raw_array.data(), raw_array.size(), tofu.tofu_.get_value());
         }
 
         /**
@@ -172,7 +172,7 @@ namespace tofu {
         static void sort(std::vector<Tofu>& array, bool ascending) {
             std::vector<fossil_tofu_t*> raw_array;
             for (auto& item : array) {
-                raw_array.push_back(item.tofu_.get());
+                raw_array.push_back(item.tofu_.get_value());
             }
             fossil_algorithm_sort(raw_array.data(), raw_array.size(), ascending);
         }
@@ -185,7 +185,7 @@ namespace tofu {
          */
         static void transform(std::vector<Tofu>& array, int (*transform_fn)(fossil_tofu_t *tofu)) {
             for (auto& item : array) {
-                transform_fn(item.tofu_.get());
+                transform_fn(item.tofu_.get_value());
             }
         }
 
@@ -199,7 +199,7 @@ namespace tofu {
         static std::vector<Tofu> filter(const std::vector<Tofu>& array, bool (*filter_fn)(const fossil_tofu_t *tofu)) {
             std::vector<Tofu> result;
             for (const auto& item : array) {
-                if (filter_fn(item.tofu_.get())) {
+                if (filter_fn(item.tofu_.get_value())) {
                     result.push_back(item);
                 }
             }
@@ -214,7 +214,7 @@ namespace tofu {
         static void reverse(std::vector<Tofu>& array) {
             std::vector<fossil_tofu_t*> raw_array;
             for (auto& item : array) {
-                raw_array.push_back(item.tofu_.get());
+                raw_array.push_back(item.tofu_.get_value());
             }
             fossil_algorithm_reverse(raw_array.data(), raw_array.size());
         }
@@ -228,7 +228,7 @@ namespace tofu {
         static Tofu min(const std::vector<Tofu>& array) {
             std::vector<fossil_tofu_t*> raw_array;
             for (const auto& item : array) {
-                raw_array.push_back(item.tofu_.get());
+                raw_array.push_back(item.tofu_.get_value());
             }
             fossil_tofu_t* min_tofu = fossil_algorithm_min(raw_array.data(), raw_array.size());
             return Tofu(min_tofu->type, min_tofu->value);
@@ -243,7 +243,7 @@ namespace tofu {
         static Tofu max(const std::vector<Tofu>& array) {
             std::vector<fossil_tofu_t*> raw_array;
             for (const auto& item : array) {
-                raw_array.push_back(item.tofu_.get());
+                raw_array.push_back(item.tofu_.get_value());
             }
             fossil_tofu_t* max_tofu = fossil_algorithm_max(raw_array.data(), raw_array.size());
             return Tofu(max_tofu->type, max_tofu->value);
@@ -259,7 +259,7 @@ namespace tofu {
         static void* sum(const std::vector<Tofu>& array, void* (*sum_fn)(const fossil_tofu_t *tofu)) {
             std::vector<fossil_tofu_t*> raw_array;
             for (const auto& item : array) {
-                raw_array.push_back(item.tofu_.get());
+                raw_array.push_back(item.tofu_.get_value());
             }
             return fossil_algorithm_sum(raw_array.data(), raw_array.size(), sum_fn);
         }
