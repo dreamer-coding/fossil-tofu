@@ -381,6 +381,10 @@ namespace fossil {
                 return os;
             }
 
+            Tofu get_tofu() const {
+                return *this;
+            }
+
             // Member functions
             std::string get_value() const {
                 const char* value = fossil_tofu_get_value(&tofu_);
