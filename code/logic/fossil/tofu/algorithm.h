@@ -145,7 +145,7 @@ namespace tofu {
          * @return A negative value if tofu1 < tofu2, 0 if tofu1 == tofu2, or a positive value if tofu1 > tofu2.
          */
         static int compare(const Tofu& tofu1, const Tofu& tofu2) {
-            return fossil_algorithm_compare(&tofu1.tofu_, &tofu2.tofu_);
+            return fossil_algorithm_compare(tofu1.get_tofu(), tofu2.get_tofu());
         }
 
         /**
@@ -158,7 +158,7 @@ namespace tofu {
         static int search(const std::vector<Tofu>& array, const Tofu& tofu) {
             std::vector<fossil_tofu_t*> raw_array;
             for (const auto& item : array) {
-                raw_array.push_back(&item.tofu_);
+                raw_array.push_back(item.get_tofu());
             }
             return fossil_algorithm_search(raw_array.data(), raw_array.size(), &tofu.tofu_);
         }
@@ -172,7 +172,7 @@ namespace tofu {
         static void sort(std::vector<Tofu>& array, bool ascending) {
             std::vector<fossil_tofu_t*> raw_array;
             for (auto& item : array) {
-                raw_array.push_back(item.tofu_.get_value());
+                raw_array.push_back(item.get_tofu());
             }
             fossil_algorithm_sort(*raw_array.data(), raw_array.size(), ascending);
         }
@@ -231,7 +231,7 @@ namespace tofu {
                 raw_array.push_back(item.tofu_.get_value());
             }
             fossil_tofu_t* min_tofu = fossil_algorithm_min(*raw_array.data(), raw_array.size());
-            return Tofu(*min_tofu);
+            return Tofu(*min_tofu); // Ensure Tofu has a public constructor for this
         }
 
         /**
