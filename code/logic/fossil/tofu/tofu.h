@@ -307,7 +307,6 @@ char* fossil_tofu_strdup(const char* str);
 #include <iostream>
 #include <utility>
 #include <string>
-#include <memory>
 
 /**
  * @namespace fossil
@@ -331,32 +330,45 @@ namespace fossil {
         public:
             // Constructors, destructors, and assignment operators
             Tofu(const std::string& type, const std::string& value) {
-                tofu_ = std::make_unique<fossil_tofu_t>(fossil_tofu_create(const_cast<char*>(type.c_str()), const_cast<char*>(value.c_str())));
-                if (tofu_->type == FOSSIL_TOFU_TYPE_ANY) {
+                tofu_ = fossil_tofu_create(const_cast<char*>(type.c_str()), const_cast<char*>(value.c_str()));
+                if (tofu_.type == FOSSIL_TOFU_TYPE_ANY) {
                     throw std::runtime_error("Failed to create Tofu object");
                 }
             }
 
-            ~Tofu() = default;
-
-            Tofu(const Tofu& other) {
-                tofu_ = std::make_unique<fossil_tofu_t>(*fossil_tofu_create_copy(other.tofu_.get()));
+            ~Tofu() {
+                fossil_tofu_destroy(&tofu_);
             }
 
-            Tofu(Tofu&& other) noexcept = default;
+            Tofu(const Tofu& other) {
+                tofu_ = *fossil_tofu_create_copy(&other.tofu_);
+            }
+
+            Tofu(Tofu&& other) noexcept {
+                tofu_ = other.tofu_;
+                other.tofu_ = {};
+            }
 
             Tofu& operator=(const Tofu& other) {
                 if (this != &other) {
-                    tofu_ = std::make_unique<fossil_tofu_t>(*fossil_tofu_create_copy(other.tofu_.get()));
+                    fossil_tofu_destroy(&tofu_);
+                    tofu_ = *fossil_tofu_create_copy(&other.tofu_);
                 }
                 return *this;
             }
 
-            Tofu& operator=(Tofu&& other) noexcept = default;
+            Tofu& operator=(Tofu&& other) noexcept {
+                if (this != &other) {
+                    fossil_tofu_destroy(&tofu_);
+                    tofu_ = other.tofu_;
+                    other.tofu_ = {};
+                }
+                return *this;
+            }
 
             // Overloaded operators
             bool operator==(const Tofu& other) const {
-                return fossil_tofu_equals(tofu_.get(), other.tofu_.get());
+                return fossil_tofu_equals(&tofu_, &other.tofu_);
             }
 
             bool operator!=(const Tofu& other) const {
@@ -370,65 +382,63 @@ namespace fossil {
 
             // Member functions
             std::string get_value() const {
-                const char* value = fossil_tofu_get_value(tofu_.get());
+                const char* value = fossil_tofu_get_value(&tofu_);
                 return value ? std::string(value) : std::string();
             }
 
             bool is_mutable() const {
-                return fossil_tofu_is_mutable(tofu_.get());
+                return fossil_tofu_is_mutable(&tofu_);
             }
 
             void set_value(const std::string& value) {
-                if (fossil_tofu_set_value(tofu_.get(), const_cast<char*>(value.c_str())) != FOSSIL_TOFU_SUCCESS) {
+                if (fossil_tofu_set_value(&tofu_, const_cast<char*>(value.c_str())) != FOSSIL_TOFU_SUCCESS) {
                     throw std::runtime_error("Failed to set value");
                 }
             }
 
             void set_mutable(bool mutable_flag) {
-                if (fossil_tofu_set_mutable(tofu_.get(), mutable_flag) != FOSSIL_TOFU_SUCCESS) {
+                if (fossil_tofu_set_mutable(&tofu_, mutable_flag) != FOSSIL_TOFU_SUCCESS) {
                     throw std::runtime_error("Failed to set mutable flag");
                 }
             }
 
             std::string get_type_name() const {
-                const char* type_name = fossil_tofu_type_name(tofu_->type);
+                const char* type_name = fossil_tofu_type_name(tofu_.type);
                 return type_name ? std::string(type_name) : std::string();
             }
 
             std::string get_type_info() const {
-                const char* type_info = fossil_tofu_type_info(tofu_->type);
+                const char* type_info = fossil_tofu_type_info(tofu_.type);
                 return type_info ? std::string(type_info) : std::string();
             }
 
             const fossil_tofu_attribute_t* get_attribute() const {
-                return fossil_tofu_get_attribute(tofu_.get());
+                return fossil_tofu_get_attribute(&tofu_);
             }
 
             void set_attribute(const std::string& name, const std::string& description, const std::string& id) {
-                if (fossil_tofu_set_attribute(tofu_.get(), name.c_str(), description.c_str(), id.c_str()) != FOSSIL_TOFU_SUCCESS) {
+                if (fossil_tofu_set_attribute(&tofu_, name.c_str(), description.c_str(), id.c_str()) != FOSSIL_TOFU_SUCCESS) {
                     throw std::runtime_error("Failed to set attribute");
                 }
             }
 
             void display() const {
-                fossil_tofu_display(tofu_.get());
+                fossil_tofu_display(&tofu_);
             }
 
             // New methods
             void copy_from(const Tofu& other) {
-                if (fossil_tofu_copy(tofu_.get(), other.tofu_.get()) != FOSSIL_TOFU_SUCCESS) {
+                if (fossil_tofu_copy(&tofu_, &other.tofu_) != FOSSIL_TOFU_SUCCESS) {
                     throw std::runtime_error("Failed to copy Tofu object");
                 }
             }
 
             static Tofu create_default() {
-                std::unique_ptr<fossil_tofu_t> default_tofu(fossil_tofu_create_default());
-                if (!default_tofu) {
+                fossil_tofu_t default_tofu = *fossil_tofu_create_default();
+                if (default_tofu.type == FOSSIL_TOFU_TYPE_ANY) {
                     throw std::runtime_error("Failed to create default Tofu object");
                 }
-                Tofu tofu;
-                tofu.tofu_ = std::move(default_tofu);
-                return tofu;
+                return Tofu(default_tofu);
             }
 
             static Tofu validate_type(const std::string& type_str) {
@@ -441,14 +451,14 @@ namespace fossil {
 
         private:
             // Private constructor for internal use
-            Tofu() : tofu_(std::make_unique<fossil_tofu_t>()) {}
+            Tofu(fossil_tofu_t tofu) : tofu_(tofu) {}
 
-            std::unique_ptr<fossil_tofu_t> tofu_;
+            fossil_tofu_t tofu_;
         };
 
-    } // namespace tofu
+        } // namespace tofu
 
-} // namespace fossil
+    } // namespace fossil
 
 #endif
 
