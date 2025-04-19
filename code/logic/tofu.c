@@ -125,7 +125,6 @@ fossil_tofu_t fossil_tofu_create(char* type, char* value) {
     // Initialize data and check for memory allocation failure
     tofu.value.data = fossil_tofu_strdup(value);
     if (tofu.value.data == NULL) {
-        fprintf(stderr, "Memory allocation failed for value.data\n");
         tofu.type = FOSSIL_TOFU_TYPE_ANY; // Set to a safe state if allocation fails
     } else {
         tofu.value.mutable_flag = true;
@@ -134,19 +133,16 @@ fossil_tofu_t fossil_tofu_create(char* type, char* value) {
     // Allocate memory for attributes and check for failures
     tofu.attribute.name = fossil_tofu_strdup(_TOFU_TYPE_NAME[tofu.type]);
     if (tofu.attribute.name == NULL) {
-        fprintf(stderr, "Memory allocation failed for attribute.name\n");
         tofu.type = FOSSIL_TOFU_TYPE_ANY; // Set to a safe state if allocation fails
     }
 
     tofu.attribute.description = fossil_tofu_strdup(_TOFU_TYPE_INFO[tofu.type]);
     if (tofu.attribute.description == NULL) {
-        fprintf(stderr, "Memory allocation failed for attribute.description\n");
         tofu.type = FOSSIL_TOFU_TYPE_ANY; // Set to a safe state if allocation fails
     }
 
     tofu.attribute.id = fossil_tofu_strdup(_TOFU_TYPE_ID[tofu.type]);
     if (tofu.attribute.id == NULL) {
-        fprintf(stderr, "Memory allocation failed for attribute.id\n");
         tofu.type = FOSSIL_TOFU_TYPE_ANY; // Set to a safe state if allocation fails
     }
 
@@ -349,8 +345,6 @@ tofu_memory_t fossil_tofu_realloc(tofu_memory_t ptr, size_t size) {
 void fossil_tofu_free(tofu_memory_t ptr) {
     if (ptr) {
         free(ptr);
-    } else {
-        fprintf(stderr, "Warning: Attempted to free a NULL pointer\n");
     }
 } // end of fun
 
