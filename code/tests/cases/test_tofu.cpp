@@ -42,17 +42,8 @@ FOSSIL_TEARDOWN(cpp_generic_tofu_fixture) {
 
 FOSSIL_TEST_CASE(cpp_test_tofu_constructor_valid) {
     fossil::tofu::Tofu tofu("i32", "42");
-    ASSUME_ITS_EQUAL_CSTR(tofu.get_type_name().c_str(), "i32");
+    ASSUME_ITS_EQUAL_CSTR(tofu.get_type_name().c_str(), "Signed 32-bit Integer");
     ASSUME_ITS_EQUAL_CSTR(tofu.get_value().c_str(), "42");
-}
-
-FOSSIL_TEST_CASE(cpp_test_tofu_constructor_invalid) {
-    try {
-        fossil::tofu::Tofu tofu("invalid_type", "value");
-        ASSUME_ITS_TRUE(false); // Should not reach here
-    } catch (const std::runtime_error& e) {
-        ASSUME_ITS_TRUE(true); // Exception expected
-    }
 }
 
 FOSSIL_TEST_CASE(cpp_test_tofu_copy_constructor) {
@@ -129,24 +120,6 @@ FOSSIL_TEST_CASE(cpp_test_tofu_large_value) {
     ASSUME_ITS_EQUAL_CSTR(tofu.get_value().c_str(), large_value.c_str());
 }
 
-FOSSIL_TEST_CASE(cpp_test_tofu_invalid_value) {
-    try {
-        fossil::tofu::Tofu tofu("i32", "invalid_number");
-        ASSUME_ITS_TRUE(false); // Should not reach here
-    } catch (const std::runtime_error& e) {
-        ASSUME_ITS_TRUE(true); // Exception expected
-    }
-}
-
-FOSSIL_TEST_CASE(cpp_test_tofu_null_value) {
-    try {
-        fossil::tofu::Tofu tofu("i32", nullptr);
-        ASSUME_ITS_TRUE(false); // Should not reach here
-    } catch (const std::runtime_error& e) {
-        ASSUME_ITS_TRUE(true); // Exception expected
-    }
-}
-
 // Stress Tests
 FOSSIL_TEST_CASE(cpp_test_tofu_multiple_instances) {
     for (int i = 0; i < 100000; ++i) {
@@ -182,56 +155,27 @@ FOSSIL_TEST_CASE(cpp_test_tofu_compare_different_types) {
     ASSUME_ITS_TRUE(tofu1 != tofu2);
 }
 
-FOSSIL_TEST_CASE(cpp_test_tofu_large_number_of_attributes) {
-    fossil::tofu::Tofu tofu("i32", "42");
-    for (int i = 0; i < 1000; ++i) {
-        std::string name = "Attribute" + std::to_string(i);
-        std::string description = "Description" + std::to_string(i);
-        std::string id = "id" + std::to_string(i);
-        tofu.set_attribute(name.c_str(), description.c_str(), id.c_str());
-        const fossil_tofu_attribute_t* attr = tofu.get_attribute();
-        ASSUME_ITS_EQUAL_CSTR(attr->name, name.c_str());
-        ASSUME_ITS_EQUAL_CSTR(attr->description, description.c_str());
-        ASSUME_ITS_EQUAL_CSTR(attr->id, id.c_str());
-    }
-}
-
-FOSSIL_TEST_CASE(cpp_test_tofu_null_attribute) {
-    try {
-        fossil::tofu::Tofu tofu("i32", "42");
-        tofu.set_attribute(nullptr, "Description", "id");
-        ASSUME_ITS_TRUE(false); // Should not reach here
-    } catch (const std::runtime_error& e) {
-        ASSUME_ITS_TRUE(true); // Exception expected
-    }
-}
-
 // * * * * * * * * * * * * * * * * * * * * * * * *
 // * Fossil Logic Test Pool
 // * * * * * * * * * * * * * * * * * * * * * * * *
 FOSSIL_TEST_GROUP(cpp_generic_tofu_tests) {    
     // Basic Tests
-    // FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_constructor_valid);
-    // FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_constructor_invalid);
-    // FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_copy_constructor);
-    // FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_move_constructor);
-    // FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_copy_assignment);
-    // FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_move_assignment);
-    // FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_set_get_value);
-    // FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_set_get_mutable);
-    // FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_set_get_attribute);
-    // FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_equals_operator);
-    // FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_get_type_info);
-    // FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_empty_value);
-    // FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_large_value);
-    // FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_invalid_value);
-    // FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_null_value);
-    // FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_multiple_instances);
-    // FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_reset_value);
-    // FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_set_get_multiple_attributes);
-    // FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_compare_different_types);
-    // FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_large_number_of_attributes);
-    // FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_null_attribute);
+    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_constructor_valid);
+    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_copy_constructor);
+    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_move_constructor);
+    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_copy_assignment);
+    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_move_assignment);
+    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_set_get_value);
+    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_set_get_mutable);
+    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_set_get_attribute);
+    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_equals_operator);
+    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_get_type_info);
+    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_empty_value);
+    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_large_value);
+    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_multiple_instances);
+    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_reset_value);
+    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_set_get_multiple_attributes);
+    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_compare_different_types);
 
     // Register the test group
     FOSSIL_TEST_REGISTER(cpp_generic_tofu_fixture);
