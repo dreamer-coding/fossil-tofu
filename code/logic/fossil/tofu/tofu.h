@@ -495,7 +495,7 @@ namespace fossil {
              * @brief Resets the value of this Tofu object to its default state.
              */
             void reset_value() {
-                if (fossil_tofu_set_value(&tofu_, "") != FOSSIL_TOFU_SUCCESS) {
+                if (fossil_tofu_set_value(&tofu_, std::string("").c_str()) != FOSSIL_TOFU_SUCCESS) {
                     throw std::runtime_error("Failed to reset value");
                 }
             }
