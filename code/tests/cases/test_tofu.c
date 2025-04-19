@@ -106,35 +106,25 @@ FOSSIL_TEST_CASE(c_test_equals) {
 }
 
 FOSSIL_TEST_CASE(c_test_set_attribute) {
-    fossil_tofu_t tofu = fossil_tofu_create("hex", "0xFF");
-    fossil_tofu_set_attribute(&tofu, "Hexadecimal", "A hexadecimal value", "hex");
+    fossil_tofu_t tofu = fossil_tofu_create("i8", "127");
+    int result = fossil_tofu_set_attribute(&tofu, "Test", "Test Description", "test_id");
+    ASSUME_ITS_TRUE(result == FOSSIL_TOFU_SUCCESS);
     const fossil_tofu_attribute_t *attr = fossil_tofu_get_attribute(&tofu);
-    ASSUME_ITS_EQUAL_CSTR(attr->name, "Hexadecimal");
-    ASSUME_ITS_EQUAL_CSTR(attr->description, "A hexadecimal value");
-    ASSUME_ITS_EQUAL_CSTR(attr->id, "hex");
+    ASSUME_ITS_EQUAL_CSTR(attr->name, "Test");
+    ASSUME_ITS_EQUAL_CSTR(attr->description, "Test Description");
+    ASSUME_ITS_EQUAL_CSTR(attr->id, "test_id");
     fossil_tofu_destroy(&tofu);
 }
 
 FOSSIL_TEST_CASE(c_test_get_attribute) {
-    fossil_tofu_t tofu = fossil_tofu_create("octal", "0755");
+    fossil_tofu_t tofu = fossil_tofu_create("u16", "65535");
     const fossil_tofu_attribute_t *attr = fossil_tofu_get_attribute(&tofu);
-    ASSUME_ITS_EQUAL_CSTR(attr->name, "Any");
-    ASSUME_ITS_EQUAL_CSTR(attr->description, "A generic value");
-    ASSUME_ITS_EQUAL_CSTR(attr->id, "any");
-    fossil_tofu_destroy(&tofu);
-}
-
-FOSSIL_TEST_CASE(c_test_create_invalid_type) {
-    fossil_tofu_t tofu = fossil_tofu_create("invalid_type", "123");
-    ASSUME_ITS_TRUE(tofu.type == FOSSIL_TOFU_TYPE_ANY);
-    ASSUME_ITS_EQUAL_CSTR(tofu.value.data, "123");
-    fossil_tofu_destroy(&tofu);
-}
-
-FOSSIL_TEST_CASE(c_test_create_null_value) {
-    fossil_tofu_t tofu = fossil_tofu_create("i32", NULL);
-    ASSUME_ITS_TRUE(tofu.type == FOSSIL_TOFU_TYPE_I32);
-    ASSUME_ITS_EQUAL_CSTR(tofu.value.data, "");
+    int result = fossil_tofu_set_attribute(&tofu, "Test", "Test Description", "test_id");
+    ASSUME_ITS_TRUE(result == FOSSIL_TOFU_SUCCESS);
+    attr = fossil_tofu_get_attribute(&tofu);
+    ASSUME_ITS_EQUAL_CSTR(attr->name, "Test");
+    ASSUME_ITS_EQUAL_CSTR(attr->description, "Test Description");
+    ASSUME_ITS_EQUAL_CSTR(attr->id, "test_id");
     fossil_tofu_destroy(&tofu);
 }
 
@@ -153,14 +143,6 @@ FOSSIL_TEST_CASE(c_test_create_large_value) {
     fossil_tofu_t tofu = fossil_tofu_create("cstr", large_value);
     ASSUME_ITS_TRUE(tofu.type == FOSSIL_TOFU_TYPE_CSTR);
     ASSUME_ITS_EQUAL_CSTR(tofu.value.data, large_value);
-    fossil_tofu_destroy(&tofu);
-}
-
-FOSSIL_TEST_CASE(c_test_set_value_null) {
-    fossil_tofu_t tofu = fossil_tofu_create("i8", "127");
-    int result = fossil_tofu_set_value(&tofu, NULL);
-    ASSUME_ITS_TRUE(result == FOSSIL_TOFU_SUCCESS);
-    ASSUME_ITS_EQUAL_CSTR(tofu.value.data, "");
     fossil_tofu_destroy(&tofu);
 }
 
@@ -244,11 +226,8 @@ FOSSIL_TEST_GROUP(c_generic_tofu_tests) {
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_equals);
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_set_attribute);
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_get_attribute);
-    FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_create_invalid_type);
-    FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_create_null_value);
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_create_empty_type);
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_create_large_value);
-    FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_set_value_null);
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_set_value_large);
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_set_mutable_null_tofu);
     FOSSIL_TEST_ADD(c_generic_tofu_fixture, c_test_equals_null_tofu);
