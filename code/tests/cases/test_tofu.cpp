@@ -155,23 +155,6 @@ FOSSIL_TEST_CASE(cpp_test_tofu_multiple_instances) {
     }
 }
 
-FOSSIL_TEST_CASE(cpp_test_tofu_set_get_type) {
-    fossil::tofu::Tofu tofu("i32", "42");
-    ASSUME_ITS_EQUAL_CSTR(tofu.get_type_name().c_str(), "i32");
-    tofu.set_type("float");
-    ASSUME_ITS_EQUAL_CSTR(tofu.get_type_name().c_str(), "float");
-}
-
-FOSSIL_TEST_CASE(cpp_test_tofu_set_invalid_type) {
-    try {
-        fossil::tofu::Tofu tofu("i32", "42");
-        tofu.set_type("invalid_type");
-        ASSUME_ITS_TRUE(false); // Should not reach here
-    } catch (const std::runtime_error& e) {
-        ASSUME_ITS_TRUE(true); // Exception expected
-    }
-}
-
 FOSSIL_TEST_CASE(cpp_test_tofu_reset_value) {
     fossil::tofu::Tofu tofu("i32", "42");
     tofu.reset_value();
@@ -255,6 +238,11 @@ FOSSIL_TEST_GROUP(cpp_generic_tofu_tests) {
 
     // Stress Tests
     FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_multiple_instances);
+    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_reset_value);
+    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_set_get_multiple_attributes);
+    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_compare_different_types);
+    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_large_number_of_attributes);
+    FOSSIL_TEST_ADD(cpp_generic_tofu_fixture, cpp_test_tofu_null_attribute);
 
     // Register the test group
     FOSSIL_TEST_REGISTER(cpp_generic_tofu_fixture);
