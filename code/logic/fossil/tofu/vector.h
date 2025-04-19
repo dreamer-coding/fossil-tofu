@@ -311,7 +311,7 @@ void fossil_vector_set_at(fossil_vector_t* vector, size_t index, char *element);
 namespace fossil {
 
 namespace tofu {
-
+    
     /**
      * A wrapper class for the fossil_vector_t structure, providing a C++ interface
      * for managing dynamic arrays of elements.
@@ -531,6 +531,60 @@ namespace tofu {
          */
         void set_at(size_t index, const std::string& element) {
             fossil_vector_set_at(vector, index, const_cast<char*>(element.c_str()));
+        }
+
+        // Overloaded assignment operator (copy assignment)
+        Vector& operator=(const Vector& other) {
+            if (this != &other) {
+                if (vector) {
+                    fossil_vector_destroy(vector);
+                }
+                vector = fossil_vector_create_copy(other.vector);
+                if (fossil_vector_is_cnullptr(vector)) {
+                    throw std::runtime_error("Failed to copy vector");
+                }
+            }
+            return *this;
+        }
+
+        // Overloaded assignment operator (move assignment)
+        Vector& operator=(Vector&& other) noexcept {
+            if (this != &other) {
+                if (vector) {
+                    fossil_vector_destroy(vector);
+                }
+                vector = other.vector;
+                other.vector = nullptr;
+            }
+            return *this;
+        }
+
+        // Overloaded subscript operator (const version)
+        const std::string operator[](size_t index) const {
+            return std::string(fossil_vector_get(vector, index));
+        }
+
+        // Overloaded subscript operator (non-const version)
+        char* operator[](size_t index) {
+            return fossil_vector_get(vector, index);
+        }
+
+        // Overloaded equality operator
+        bool operator==(const Vector& other) const {
+            if (size() != other.size()) {
+                return false;
+            }
+            for (size_t i = 0; i < size(); ++i) {
+                if (get(i) != other.get(i)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Overloaded inequality operator
+        bool operator!=(const Vector& other) const {
+            return !(*this == other);
         }
 
     private:
