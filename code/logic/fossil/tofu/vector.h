@@ -533,20 +533,6 @@ namespace tofu {
             fossil_vector_set_at(vector, index, const_cast<char*>(element.c_str()));
         }
 
-        // Overloaded assignment operator (copy assignment)
-        Vector& operator=(const Vector& other) {
-            if (this != &other) {
-                if (vector) {
-                    fossil_vector_destroy(vector);
-                }
-                vector = fossil_vector_create_copy(other.vector);
-                if (fossil_vector_is_cnullptr(vector)) {
-                    throw std::runtime_error("Failed to copy vector");
-                }
-            }
-            return *this;
-        }
-
         // Overloaded assignment operator (move assignment)
         Vector& operator=(Vector&& other) noexcept {
             if (this != &other) {
@@ -559,14 +545,81 @@ namespace tofu {
             return *this;
         }
 
-        // Overloaded subscript operator (const version)
-        const std::string operator[](size_t index) const {
-            return std::string(fossil_vector_get(vector, index));
+        // Overloaded subscript operator (non-const version for char*)
+        char* operator[](size_t index) {
+            if (index >= size()) {
+                throw std::out_of_range("Index out of range");
+            }
+            return fossil_vector_get(vector, index);
         }
 
-        // Overloaded subscript operator (non-const version)
-        char* operator[](size_t index) {
+        // Overloaded subscript operator (const version for char*)
+        const char* operator[](size_t index) const {
+            if (index >= size()) {
+                throw std::out_of_range("Index out of range");
+            }
             return fossil_vector_get(vector, index);
+        }
+
+        // Overloaded subscript operator (non-const version for char*)
+        char* operator()(size_t index) {
+            if (index >= size()) {
+                throw std::out_of_range("Index out of range");
+            }
+            return fossil_vector_get(vector, index);
+        }
+
+        // Overloaded subscript operator (const version for char*)
+        const char* operator()(size_t index) const {
+            if (index >= size()) {
+            throw std::out_of_range("Index out of range");
+            }
+            return fossil_vector_get(vector, index);
+        }
+
+        // Overloaded addition operator for appending an element
+        Vector& operator+(const std::string& element) {
+            push_back(element);
+            return *this;
+        }
+
+        // Overloaded addition assignment operator for appending an element
+        Vector& operator+=(const std::string& element) {
+            push_back(element);
+            return *this;
+        }
+
+        // Overloaded inequality operator for comparing two vectors
+        bool operator!=(const Vector& other) const {
+            return !(*this == other);
+        }
+
+        // Overloaded less-than operator for lexicographical comparison
+        bool operator<(const Vector& other) const {
+            size_t min_size = std::min(size(), other.size());
+            for (size_t i = 0; i < min_size; ++i) {
+            if (get(i) < other.get(i)) {
+                return true;
+            } else if (get(i) > other.get(i)) {
+                return false;
+            }
+            }
+            return size() < other.size();
+        }
+
+        // Overloaded greater-than operator for lexicographical comparison
+        bool operator>(const Vector& other) const {
+            return other < *this;
+        }
+
+        // Overloaded less-than-or-equal-to operator
+        bool operator<=(const Vector& other) const {
+            return !(other < *this);
+        }
+
+        // Overloaded greater-than-or-equal-to operator
+        bool operator>=(const Vector& other) const {
+            return !(*this < other);
         }
 
         // Overloaded equality operator
@@ -582,9 +635,34 @@ namespace tofu {
             return true;
         }
 
-        // Overloaded inequality operator
-        bool operator!=(const Vector& other) const {
-            return !(*this == other);
+        // Overloaded pre-increment operator
+        Vector& operator++() {
+            push_back("");
+            return *this;
+        }
+
+        // Overloaded post-increment operator
+        Vector operator++(int) {
+            Vector temp = *this;
+            push_back("");
+            return temp;
+        }
+
+        // Overloaded pre-decrement operator
+        Vector& operator--() {
+            if (!is_empty()) {
+            pop_back();
+            }
+            return *this;
+        }
+
+        // Overloaded post-decrement operator
+        Vector operator--(int) {
+            Vector temp = *this;
+            if (!is_empty()) {
+            pop_back();
+            }
+            return temp;
         }
 
     private:
