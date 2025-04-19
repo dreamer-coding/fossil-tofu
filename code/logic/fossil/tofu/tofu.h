@@ -405,6 +405,29 @@ namespace fossil {
             }
 
             /**
+             * @brief Gets the type of the Tofu object.
+             */
+            fossil_tofu_type_t get_type() const {
+                return fossil_tofu_get_type(&tofu_);
+            }
+
+            /**
+             * @brief Checks if the value of this Tofu object is valid.
+             */
+            void set_value(const char* value) {
+                if (fossil_tofu_set_value(&tofu_, const_cast<char*>(value)) != FOSSIL_TOFU_SUCCESS) {
+                    throw std::runtime_error("Failed to set value");
+                }
+            }
+
+            /**
+             * @brief Checks if the value of this Tofu object is valid.
+             */
+            bool is_valid() const {
+                return (tofu_.type != FOSSIL_TOFU_TYPE_ANY);
+            }
+
+            /**
              * @brief Checks if the value of this Tofu object is mutable.
              */
             bool is_mutable() const {
@@ -469,6 +492,15 @@ namespace fossil {
             }
 
             /**
+             * @brief Resets the value of this Tofu object to its default state.
+             */
+            void reset_value() {
+                if (fossil_tofu_set_value(&tofu_, "") != FOSSIL_TOFU_SUCCESS) {
+                    throw std::runtime_error("Failed to reset value");
+                }
+            }
+
+            /**
              * @brief Displays the Tofu object using the default renderer (typically to stdout).
              */
             void display() const {
@@ -482,20 +514,6 @@ namespace fossil {
              */
             fossil_tofu_t* c_tofu() {
                 return &tofu_;
-            }
-
-            /**
-             * @brief Overloads the stream insertion operator for Tofu objects.
-             * 
-             * @param os The output stream.
-             * @param tofu The Tofu object to insert into the stream.
-             * @return The output stream.
-             */
-            friend std::ostream& operator<<(std::ostream& os, const Tofu& tofu) {
-                os << "Tofu(type: " << tofu.get_type_name()
-                   << ", value: " << tofu.get_value()
-                   << ", mutable: " << (tofu.is_mutable() ? "true" : "false") << ")";
-                return os;
             }
 
         private:
