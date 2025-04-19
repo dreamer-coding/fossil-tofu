@@ -137,131 +137,48 @@ namespace tofu {
      */
     class Algorithm {
     public:
-        /**
-         * Compares two `Tofu` objects.
-         *
-         * @param tofu1 The first `Tofu` object.
-         * @param tofu2 The second `Tofu` object.
-         * @return A negative value if tofu1 < tofu2, 0 if tofu1 == tofu2, or a positive value if tofu1 > tofu2.
-         */
+        // Static methods for algorithmic operations
         static int compare(const Tofu& tofu1, const Tofu& tofu2) {
-            return fossil_algorithm_compare(tofu1.get_tofu(), tofu2.get_tofu());
+            return fossil_algorithm_compare(&tofu1.get_tofu(), &tofu2.get_tofu());
         }
 
-        /**
-         * Searches for a `Tofu` object in an array.
-         *
-         * @param array The array of `Tofu` objects.
-         * @param tofu The `Tofu` object to search for.
-         * @return The index of the tofu object if found, or -1 if not found.
-         */
         static int search(const std::vector<Tofu>& array, const Tofu& tofu) {
-            std::vector<fossil_tofu_t*> raw_array;
-            for (const auto& item : array) {
-                raw_array.push_back(item.get_tofu());
-            }
-            return fossil_algorithm_search(raw_array.data(), raw_array.size(), &tofu.tofu_);
+            return fossil_algorithm_search(array.data(), array.size(), &tofu.get_tofu());
         }
 
-        /**
-         * Sorts an array of `Tofu` objects.
-         *
-         * @param array The array of `Tofu` objects.
-         * @param ascending A boolean flag to indicate sorting order: `true` for ascending, `false` for descending.
-         */
-        static void sort(std::vector<Tofu>& array, bool ascending) {
-            std::vector<fossil_tofu_t*> raw_array;
-            for (auto& item : array) {
-                raw_array.push_back(item.get_tofu());
-            }
-            fossil_algorithm_sort(*raw_array.data(), raw_array.size(), ascending);
+        static int sort(std::vector<Tofu>& array, bool ascending) {
+            return fossil_algorithm_sort(array.data(), array.size(), ascending);
         }
 
-        /**
-         * Transforms an array of `Tofu` objects using a transformation function.
-         *
-         * @param array The array of `Tofu` objects.
-         * @param transform_fn A function pointer to a transformation function.
-         */
-        static void transform(std::vector<Tofu>& array, int (*transform_fn)(fossil_tofu_t *tofu)) {
-            for (auto& item : array) {
-                transform_fn(item.tofu_.get_value());
-            }
+        static int transform(std::vector<Tofu>& array, int (*transform_fn)(fossil_tofu_t *tofu)) {
+            return fossil_algorithm_transform(array.data(), array.size(), transform_fn);
         }
 
-        /**
-         * Filters an array of `Tofu` objects based on a filtering function.
-         *
-         * @param array The array of `Tofu` objects.
-         * @param filter_fn A function pointer to a filtering function.
-         * @return A filtered vector of `Tofu` objects.
-         */
-        static std::vector<Tofu> filter(const std::vector<Tofu>& array, bool (*filter_fn)(const fossil_tofu_t *tofu)) {
-            std::vector<Tofu> result;
-            for (const auto& item : array) {
-                if (filter_fn(item.tofu_.get_value())) {
-                    result.push_back(item);
-                }
-            }
-            return result;
+        static void* accumulate(const std::vector<Tofu>& array, void* (*accumulate_fn)(const fossil_tofu_t *tofu, void *accum), void* initial) {
+            return fossil_algorithm_accumulate(array.data(), array.size(), accumulate_fn, initial);
         }
 
-        /**
-         * Reverses an array of `Tofu` objects.
-         *
-         * @param array The array of `Tofu` objects.
-         */
-        static void reverse(std::vector<Tofu>& array) {
-            std::vector<fossil_tofu_t*> raw_array;
-            for (auto& item : array) {
-                raw_array.push_back(item.tofu_.get_value());
-            }
-            fossil_algorithm_reverse(*raw_array.data(), raw_array.size());
+        static int filter(const std::vector<Tofu>& array, bool (*filter_fn)(const fossil_tofu_t *tofu), std::vector<Tofu>& result) {
+            size_t result_size;
+            int status = fossil_algorithm_filter(array.data(), array.size(), filter_fn, result.data(), &result_size);
+            result.resize(result_size);
+            return status;
         }
 
-        /**
-         * Finds the minimum `Tofu` object in an array.
-         *
-         * @param array The array of `Tofu` objects.
-         * @return The minimum `Tofu` object.
-         */
-        static Tofu min(const std::vector<Tofu>& array) {
-            std::vector<fossil_tofu_t*> raw_array;
-            for (const auto& item : array) {
-                raw_array.push_back(item.tofu_.get_value());
-            }
-            fossil_tofu_t* min_tofu = fossil_algorithm_min(*raw_array.data(), raw_array.size());
-            return Tofu(*min_tofu); // Ensure Tofu has a public constructor for this
+        static int reverse(std::vector<Tofu>& array) {
+            return fossil_algorithm_reverse(array.data(), array.size());
         }
 
-        /**
-         * Finds the maximum `Tofu` object in an array.
-         *
-         * @param array The array of `Tofu` objects.
-         * @return The maximum `Tofu` object.
-         */
-        static Tofu max(const std::vector<Tofu>& array) {
-            std::vector<fossil_tofu_t*> raw_array;
-            for (const auto& item : array) {
-                raw_array.push_back(item.tofu_.get_value());
-            }
-            fossil_tofu_t* max_tofu = fossil_algorithm_max(raw_array.data(), raw_array.size());
-            return Tofu(max_tofu->type, max_tofu->value);
+        static Tofu* min(const std::vector<Tofu>& array) {
+            return fossil_algorithm_min(array.data(), array.size());
         }
 
-        /**
-         * Calculates the sum of numerical values in an array of `Tofu` objects.
-         *
-         * @param array The array of `Tofu` objects.
-         * @param sum_fn A function pointer to a sum function.
-         * @return The sum result.
-         */
+        static Tofu* max(const std::vector<Tofu>& array) {
+            return fossil_algorithm_max(array.data(), array.size());
+        }
+
         static void* sum(const std::vector<Tofu>& array, void* (*sum_fn)(const fossil_tofu_t *tofu)) {
-            std::vector<fossil_tofu_t*> raw_array;
-            for (const auto& item : array) {
-                raw_array.push_back(item.tofu_.get_value());
-            }
-            return fossil_algorithm_sum(raw_array.data(), raw_array.size(), sum_fn);
+            return fossil_algorithm_sum(array.data(), array.size(), sum_fn);
         }
     };
 
