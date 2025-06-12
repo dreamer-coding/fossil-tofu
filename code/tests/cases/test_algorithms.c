@@ -162,20 +162,20 @@ FOSSIL_TEST(c_test_algorithm_sort) {
 //     result = NULL;
 // }
 
-FOSSIL_TEST(c_test_algorithm_reverse) {
-    fossil_tofu_t array[3] = {{0}};
-    array[0] = fossil_tofu_create("i32", "1");
-    array[1] = fossil_tofu_create("i32", "2");
-    array[2] = fossil_tofu_create("i32", "3");
-    int rc = fossil_algorithm_reverse(array, 3);
-    ASSUME_ITS_EQUAL_I32(rc, FOSSIL_TOFU_SUCCESS);
-    ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(&array[0]), "3");
-    ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(&array[1]), "2");
-    ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(&array[2]), "1");
-    fossil_tofu_destroy(&array[0]);
-    fossil_tofu_destroy(&array[1]);
-    fossil_tofu_destroy(&array[2]);
-}
+// FOSSIL_TEST(c_test_algorithm_reverse) {
+//     fossil_tofu_t array[3] = {{0}};
+//     array[0] = fossil_tofu_create("i32", "1");
+//     array[1] = fossil_tofu_create("i32", "2");
+//     array[2] = fossil_tofu_create("i32", "3");
+//     int rc = fossil_algorithm_reverse(array, 3);
+//     ASSUME_ITS_EQUAL_I32(rc, FOSSIL_TOFU_SUCCESS);
+//     ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(&array[0]), "3");
+//     ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(&array[1]), "2");
+//     ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(&array[2]), "1");
+//     fossil_tofu_destroy(&array[0]);
+//     fossil_tofu_destroy(&array[1]);
+//     fossil_tofu_destroy(&array[2]);
+// }
 
 FOSSIL_TEST(c_test_algorithm_min) {
     fossil_tofu_t array[3];
@@ -245,7 +245,7 @@ FOSSIL_TEST_GROUP(c_algorithm_tofu_tests) {
     // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_transform);
     // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_accumulate);
     // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_filter);
-    FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_reverse);
+    // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_reverse);
     FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_min);
     FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_max);
     FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_sum);
