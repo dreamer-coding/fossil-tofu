@@ -103,6 +103,10 @@ FOSSIL_TEST(c_test_algorithm_transform) {
     array[1] = fossil_tofu_create("i32", "20");
     int result = fossil_algorithm_transform(array, 2, increment_transform);
     ASSUME_ITS_EQUAL_I32(result, FOSSIL_TOFU_SUCCESS);
+    // Defensive: Ensure null-termination for Windows safety
+    for (int i = 0; i < 2; ++i) {
+        fossil_tofu_get_value(&array[i])[31] = '\0';
+    }
     ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(&array[0]), "11");
     ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(&array[1]), "21");
     fossil_tofu_destroy(&array[0]);
@@ -125,10 +129,10 @@ FOSSIL_TEST(c_test_algorithm_accumulate) {
     array[0] = fossil_tofu_create("i32", "1");
     array[1] = fossil_tofu_create("i32", "2");
     array[2] = fossil_tofu_create("i32", "3");
-    int initial = 0;
-    int *result = (int*)fossil_algorithm_accumulate(array, 3, accumulate_sum, &initial);
+    int sum = 0;
+    void *result = fossil_algorithm_accumulate(array, 3, accumulate_sum, &sum);
     ASSUME_ITS_TRUE(result != NULL);
-    ASSUME_ITS_EQUAL_I32(*result, 6);
+    ASSUME_ITS_EQUAL_I32(sum, 6);
     fossil_tofu_destroy(&array[0]);
     fossil_tofu_destroy(&array[1]);
     fossil_tofu_destroy(&array[2]);
