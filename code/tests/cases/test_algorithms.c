@@ -41,9 +41,12 @@ FOSSIL_TEARDOWN(c_algorithm_tofu_fixture) {
 // * * * * * * * * * * * * * * * * * * * * * * * *
 
 FOSSIL_TEST(c_test_algorithm_compare) {
-    fossil_tofu_t tofu1 = fossil_tofu_create("i32", "10");
-    fossil_tofu_t tofu2 = fossil_tofu_create("i32", "20");
-    fossil_tofu_t tofu3 = fossil_tofu_create("i32", "10");
+    fossil_tofu_t tofu1 = {0};
+    fossil_tofu_t tofu2 = {0};
+    fossil_tofu_t tofu3 = {0};
+    tofu1 = fossil_tofu_create("i32", "10");
+    tofu2 = fossil_tofu_create("i32", "20");
+    tofu3 = fossil_tofu_create("i32", "10");
     ASSUME_ITS_TRUE(fossil_algorithm_compare(&tofu1, &tofu2) < 0);
     ASSUME_ITS_TRUE(fossil_algorithm_compare(&tofu2, &tofu1) > 0);
     ASSUME_ITS_TRUE(fossil_algorithm_compare(&tofu1, &tofu3) == 0);
@@ -53,12 +56,13 @@ FOSSIL_TEST(c_test_algorithm_compare) {
 }
 
 FOSSIL_TEST(c_test_algorithm_search) {
-    fossil_tofu_t array[3];
+    fossil_tofu_t array[3] = {0};
     array[0] = fossil_tofu_create("i32", "1");
     array[1] = fossil_tofu_create("i32", "2");
     array[2] = fossil_tofu_create("i32", "3");
     fossil_tofu_t target = fossil_tofu_create("i32", "2");
     int idx = fossil_algorithm_search(array, 3, &target);
+    ASSUME_ITS_TRUE(idx >= 0 && idx < 3);
     ASSUME_ITS_EQUAL_I32(idx, 1);
     fossil_tofu_destroy(&array[0]);
     fossil_tofu_destroy(&array[1]);
@@ -84,7 +88,12 @@ FOSSIL_TEST(c_test_algorithm_sort) {
 static int increment_transform(fossil_tofu_t *tofu) {
     int value = atoi(fossil_tofu_get_value(tofu));
     char buf[32];
+#if defined(_MSC_VER)
+    _snprintf(buf, sizeof(buf), "%d", value + 1);
+#else
     snprintf(buf, sizeof(buf), "%d", value + 1);
+#endif
+    buf[sizeof(buf) - 1] = '\0'; // Ensure null-termination
     return fossil_tofu_set_value(tofu, buf);
 }
 
@@ -102,7 +111,12 @@ FOSSIL_TEST(c_test_algorithm_transform) {
 
 static void* accumulate_sum(const fossil_tofu_t *tofu, void *accum) {
     int *sum = (int*)accum;
-    *sum += atoi(fossil_tofu_get_value(tofu));
+    if (sum && tofu) {
+        const char *val = fossil_tofu_get_value(tofu);
+        if (val) {
+            *sum += atoi(val);
+        }
+    }
     return sum;
 }
 
@@ -113,6 +127,7 @@ FOSSIL_TEST(c_test_algorithm_accumulate) {
     array[2] = fossil_tofu_create("i32", "3");
     int initial = 0;
     int *result = (int*)fossil_algorithm_accumulate(array, 3, accumulate_sum, &initial);
+    ASSUME_ITS_TRUE(result != NULL);
     ASSUME_ITS_EQUAL_I32(*result, 6);
     fossil_tofu_destroy(&array[0]);
     fossil_tofu_destroy(&array[1]);
@@ -140,10 +155,11 @@ FOSSIL_TEST(c_test_algorithm_filter) {
     for (size_t i = 0; i < 4; ++i) fossil_tofu_destroy(&array[i]);
     for (size_t i = 0; i < result_size; ++i) fossil_tofu_destroy(&result[i]);
     free(result);
+    result = NULL;
 }
 
 FOSSIL_TEST(c_test_algorithm_reverse) {
-    fossil_tofu_t array[3];
+    fossil_tofu_t array[3] = {0};
     array[0] = fossil_tofu_create("i32", "1");
     array[1] = fossil_tofu_create("i32", "2");
     array[2] = fossil_tofu_create("i32", "3");
@@ -163,7 +179,10 @@ FOSSIL_TEST(c_test_algorithm_min) {
     array[1] = fossil_tofu_create("i32", "2");
     array[2] = fossil_tofu_create("i32", "8");
     fossil_tofu_t *min = fossil_algorithm_min(array, 3);
-    ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(min), "2");
+    ASSUME_ITS_TRUE(min != NULL);
+    if (min != NULL) {
+        ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(min), "2");
+    }
     fossil_tofu_destroy(&array[0]);
     fossil_tofu_destroy(&array[1]);
     fossil_tofu_destroy(&array[2]);
@@ -175,15 +194,20 @@ FOSSIL_TEST(c_test_algorithm_max) {
     array[1] = fossil_tofu_create("i32", "2");
     array[2] = fossil_tofu_create("i32", "8");
     fossil_tofu_t *max = fossil_algorithm_max(array, 3);
-    ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(max), "8");
+    ASSUME_ITS_TRUE(max != NULL);
+    if (max != NULL) {
+        ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(max), "8");
+    }
     fossil_tofu_destroy(&array[0]);
     fossil_tofu_destroy(&array[1]);
     fossil_tofu_destroy(&array[2]);
 }
 
 static void* sum_fn(const fossil_tofu_t *tofu) {
-    int *value = fossil_tofu_alloc(sizeof(int));
-    *value = atoi(fossil_tofu_get_value(tofu));
+    int *value = (int*)fossil_tofu_alloc(sizeof(int));
+    if (!value) return NULL;
+    const char *str = fossil_tofu_get_value(tofu);
+    *value = (str != NULL) ? atoi(str) : 0;
     return value;
 }
 
@@ -195,8 +219,10 @@ FOSSIL_TEST(c_test_algorithm_sum) {
     int total = 0;
     for (size_t i = 0; i < 3; ++i) {
         int *v = (int*)sum_fn(&array[i]);
-        total += *v;
-        free(v);
+        if (v) {
+            total += *v;
+            free(v);
+        }
     }
     ASSUME_ITS_EQUAL_I32(total, 10);
     fossil_tofu_destroy(&array[0]);
@@ -212,13 +238,13 @@ FOSSIL_TEST_GROUP(c_algorithm_tofu_tests) {
     FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_compare);
     FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_search);
     FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_sort);
-    // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_transform);
-    // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_accumulate);
-    // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_filter);
-    // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_reverse);
-    // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_min);
-    // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_max);
-    // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_sum);
+    FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_transform);
+    FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_accumulate);
+    FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_filter);
+    FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_reverse);
+    FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_min);
+    FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_max);
+    FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_sum);
 
     // Register the test group
     FOSSIL_TEST_REGISTER(c_algorithm_tofu_fixture);
