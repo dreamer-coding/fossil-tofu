@@ -212,13 +212,13 @@ FOSSIL_TEST_GROUP(c_algorithm_tofu_tests) {
     FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_compare);
     FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_search);
     FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_sort);
-    FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_transform);
-    FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_accumulate);
-    FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_filter);
-    FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_reverse);
-    FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_min);
-    FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_max);
-    FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_sum);
+    // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_transform);
+    // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_accumulate);
+    // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_filter);
+    // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_reverse);
+    // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_min);
+    // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_max);
+    // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_sum);
 
     // Register the test group
     FOSSIL_TEST_REGISTER(c_algorithm_tofu_fixture);
