@@ -159,7 +159,7 @@ FOSSIL_TEST(c_test_algorithm_filter) {
 }
 
 FOSSIL_TEST(c_test_algorithm_reverse) {
-    fossil_tofu_t array[3] = {0};
+    fossil_tofu_t array[3] = {{0}};
     array[0] = fossil_tofu_create("i32", "1");
     array[1] = fossil_tofu_create("i32", "2");
     array[2] = fossil_tofu_create("i32", "3");
