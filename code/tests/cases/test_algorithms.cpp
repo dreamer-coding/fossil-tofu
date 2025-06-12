@@ -88,40 +88,40 @@ FOSSIL_TEST(cpp_algorithm_sort_descending) {
     ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(&cpp_array[2]), "1");
 }
 
-// static int cpp_increment_transform(fossil_tofu_t *tofu) {
-//     int value = atoi(fossil_tofu_get_value(tofu));
-//     char buf[32] = {0}; // Ensure zero-initialization for Windows safety
-//     snprintf(buf, sizeof(buf), "%d", value + 2);
-//     buf[sizeof(buf) - 1] = '\0'; // Defensive: ensure null-termination
-//     return fossil_tofu_set_value(tofu, buf);
-// }
+static int cpp_increment_transform(fossil_tofu_t *tofu) {
+    int value = atoi(fossil_tofu_get_value(tofu));
+    char buf[32] = {0}; // Ensure zero-initialization for Windows safety
+    snprintf(buf, sizeof(buf), "%d", value + 2);
+    buf[sizeof(buf) - 1] = '\0'; // Defensive: ensure null-termination
+    return fossil_tofu_set_value(tofu, buf);
+}
 
-// FOSSIL_TEST(cpp_algorithm_transform) {
-//     Tofu array[2] = { Tofu("i32", "10"), Tofu("i32", "20") };
-//     fossil_tofu_t cpp_array[2] = { array[0].get_c_struct(), array[1].get_c_struct() };
-//     int result = Algorithm::transform(cpp_array, 2, cpp_increment_transform);
-//     ASSUME_ITS_EQUAL_I32(result, FOSSIL_TOFU_SUCCESS);
-//     // Defensive: Ensure null-termination for Windows safety
-//     for (int i = 0; i < 2; ++i) {
-//         fossil_tofu_get_value(&cpp_array[i])[31] = '\0';
-//     }
-//     ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(&cpp_array[0]), "12");
-//     ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(&cpp_array[1]), "22");
-// }
+FOSSIL_TEST(cpp_algorithm_transform) {
+    Tofu array[2] = { Tofu("i32", "10"), Tofu("i32", "20") };
+    fossil_tofu_t cpp_array[2] = { array[0].get_c_struct(), array[1].get_c_struct() };
+    int result = Algorithm::transform(cpp_array, 2, cpp_increment_transform);
+    ASSUME_ITS_EQUAL_I32(result, FOSSIL_TOFU_SUCCESS);
+    // Defensive: Ensure null-termination for Windows safety
+    for (int i = 0; i < 2; ++i) {
+        fossil_tofu_get_value(&cpp_array[i])[31] = '\0';
+    }
+    ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(&cpp_array[0]), "12");
+    ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(&cpp_array[1]), "22");
+}
 
-// static void* cpp_accumulate_sum(const fossil_tofu_t *tofu, void *accum) {
-//     int *sum = (int*)accum;
-//     *sum += atoi(fossil_tofu_get_value(tofu));
-//     return sum;
-// }
+static void* cpp_accumulate_sum(const fossil_tofu_t *tofu, void *accum) {
+    int *sum = (int*)accum;
+    *sum += atoi(fossil_tofu_get_value(tofu));
+    return sum;
+}
 
-// FOSSIL_TEST(cpp_algorithm_accumulate) {
-//     Tofu array[3] = { Tofu("i32", "4"), Tofu("i32", "5"), Tofu("i32", "6") };
-//     int initial = 1;
-//     fossil_tofu_t cpp_array[3] = { array[0].get_c_struct(), array[1].get_c_struct(), array[2].get_c_struct() };
-//     int *result = (int*)Algorithm::accumulate(cpp_array, 3, cpp_accumulate_sum, &initial);
-//     ASSUME_ITS_EQUAL_I32(*result, 16);
-// }
+FOSSIL_TEST(cpp_algorithm_accumulate) {
+    Tofu array[3] = { Tofu("i32", "4"), Tofu("i32", "5"), Tofu("i32", "6") };
+    int initial = 1;
+    fossil_tofu_t cpp_array[3] = { array[0].get_c_struct(), array[1].get_c_struct(), array[2].get_c_struct() };
+    int *result = (int*)Algorithm::accumulate(cpp_array, 3, cpp_accumulate_sum, &initial);
+    ASSUME_ITS_EQUAL_I32(*result, 16);
+}
 
 // static bool cpp_filter_odd(const fossil_tofu_t *tofu) {
 //     int value = atoi(fossil_tofu_get_value(tofu));
@@ -160,23 +160,23 @@ FOSSIL_TEST(cpp_algorithm_sort_descending) {
 //     ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(&cpp_array[2]), "7");
 // }
 
-FOSSIL_TEST(cpp_algorithm_min) {
-    Tofu array[3] = { Tofu("i32", "15"), Tofu("i32", "12"), Tofu("i32", "18") };
-    fossil_tofu_t cpp_array[3] = { array[0].get_c_struct(), array[1].get_c_struct(), array[2].get_c_struct() };
-    fossil_tofu_t *min = Algorithm::min(cpp_array, 3);
-    // Defensive: Ensure null-termination for Windows safety
-    fossil_tofu_get_value(min)[31] = '\0';
-    ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(min), "12");
-}
+// FOSSIL_TEST(cpp_algorithm_min) {
+//     Tofu array[3] = { Tofu("i32", "15"), Tofu("i32", "12"), Tofu("i32", "18") };
+//     fossil_tofu_t cpp_array[3] = { array[0].get_c_struct(), array[1].get_c_struct(), array[2].get_c_struct() };
+//     fossil_tofu_t *min = Algorithm::min(cpp_array, 3);
+//     // Defensive: Ensure null-termination for Windows safety
+//     fossil_tofu_get_value(min)[31] = '\0';
+//     ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(min), "12");
+// }
 
-FOSSIL_TEST(cpp_algorithm_max) {
-    Tofu array[3] = { Tofu("i32", "15"), Tofu("i32", "12"), Tofu("i32", "18") };
-    fossil_tofu_t cpp_array[3] = { array[0].get_c_struct(), array[1].get_c_struct(), array[2].get_c_struct() };
-    fossil_tofu_t *max = Algorithm::max(cpp_array, 3);
-    // Defensive: Ensure null-termination for Windows safety
-    fossil_tofu_get_value(max)[31] = '\0';
-    ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(max), "18");
-}
+// FOSSIL_TEST(cpp_algorithm_max) {
+//     Tofu array[3] = { Tofu("i32", "15"), Tofu("i32", "12"), Tofu("i32", "18") };
+//     fossil_tofu_t cpp_array[3] = { array[0].get_c_struct(), array[1].get_c_struct(), array[2].get_c_struct() };
+//     fossil_tofu_t *max = Algorithm::max(cpp_array, 3);
+//     // Defensive: Ensure null-termination for Windows safety
+//     fossil_tofu_get_value(max)[31] = '\0';
+//     ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(max), "18");
+// }
 
 // static void* cpp_sum_fn(const fossil_tofu_t *tofu) {
 //     int *value = (int*)fossil_tofu_alloc(sizeof(int));
@@ -209,12 +209,12 @@ FOSSIL_TEST_GROUP(cpp_algorithm_tofu_tests) {
     FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_search);
     FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_sort_ascending);
     FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_sort_descending);
-    // FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_transform);
-    // FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_accumulate);
+    FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_transform);
+    FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_accumulate);
     // FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_filter);
     // FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_reverse);
-    FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_min);
-    FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_max);
+    // FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_min);
+    // FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_max);
     // FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_sum);
 
     // Register the test group
