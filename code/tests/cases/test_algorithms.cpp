@@ -88,13 +88,13 @@ FOSSIL_TEST(cpp_algorithm_sort_descending) {
     ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(&cpp_array[2]), "1");
 }
 
-static int cpp_increment_transform(fossil_tofu_t *tofu) {
-    int value = atoi(fossil_tofu_get_value(tofu));
-    char buf[32] = {0}; // Ensure zero-initialization for Windows safety
-    snprintf(buf, sizeof(buf), "%d", value + 2);
-    buf[sizeof(buf) - 1] = '\0'; // Defensive: ensure null-termination
-    return fossil_tofu_set_value(tofu, buf);
-}
+// static int cpp_increment_transform(fossil_tofu_t *tofu) {
+//     int value = atoi(fossil_tofu_get_value(tofu));
+//     char buf[32] = {0}; // Ensure zero-initialization for Windows safety
+//     snprintf(buf, sizeof(buf), "%d", value + 2);
+//     buf[sizeof(buf) - 1] = '\0'; // Defensive: ensure null-termination
+//     return fossil_tofu_set_value(tofu, buf);
+// }
 
 // FOSSIL_TEST(cpp_algorithm_transform) {
 //     Tofu array[2] = { Tofu("i32", "10"), Tofu("i32", "20") };
