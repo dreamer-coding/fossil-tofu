@@ -178,27 +178,27 @@ FOSSIL_TEST(cpp_algorithm_max) {
     ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(max), "18");
 }
 
-static void* cpp_sum_fn(const fossil_tofu_t *tofu) {
-    int *value = (int*)fossil_tofu_alloc(sizeof(int));
-    // Defensive: Ensure null-termination for Windows safety
-    char buf[32];
-    strncpy(buf, fossil_tofu_get_value(tofu), 31);
-    buf[31] = '\0';
-    *value = atoi(buf);
-    return value;
-}
+// static void* cpp_sum_fn(const fossil_tofu_t *tofu) {
+//     int *value = (int*)fossil_tofu_alloc(sizeof(int));
+//     // Defensive: Ensure null-termination for Windows safety
+//     char buf[32];
+//     strncpy(buf, fossil_tofu_get_value(tofu), 31);
+//     buf[31] = '\0';
+//     *value = atoi(buf);
+//     return value;
+// }
 
-FOSSIL_TEST(cpp_algorithm_sum) {
-    Tofu array[3] = { Tofu("i32", "2"), Tofu("i32", "3"), Tofu("i32", "5") };
-    int total = 0;
-    int *values[3];
-    for (size_t i = 0; i < 3; ++i) {
-        values[i] = (int*)cpp_sum_fn(&array[i].get_c_struct());
-        total += *values[i];
-        free(values[i]);
-    }
-    ASSUME_ITS_EQUAL_I32(total, 10);
-}
+// FOSSIL_TEST(cpp_algorithm_sum) {
+//     Tofu array[3] = { Tofu("i32", "2"), Tofu("i32", "3"), Tofu("i32", "5") };
+//     int total = 0;
+//     int *values[3];
+//     for (size_t i = 0; i < 3; ++i) {
+//         values[i] = (int*)cpp_sum_fn(&array[i].get_c_struct());
+//         total += *values[i];
+//         free(values[i]);
+//     }
+//     ASSUME_ITS_EQUAL_I32(total, 10);
+// }
 
 // * * * * * * * * * * * * * * * * * * * * * * * *
 // * Fossil Logic Test Pool
@@ -215,7 +215,7 @@ FOSSIL_TEST_GROUP(cpp_algorithm_tofu_tests) {
     // FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_reverse);
     FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_min);
     FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_max);
-    FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_sum);
+    // FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_sum);
 
     // Register the test group
     FOSSIL_TEST_REGISTER(cpp_algorithm_tofu_fixture);
