@@ -359,14 +359,3 @@ fossil_tofu_t* fossil_algorithm_max(const fossil_tofu_t *array, size_t size) {
 
     return max;
 }
-
-void* fossil_algorithm_sum(const fossil_tofu_t *array, size_t size, void* (*sum_fn)(const fossil_tofu_t *tofu, void *accum), void *initial) {
-    if (array == NULL || size == 0 || sum_fn == NULL) return NULL;
-
-    void *sum = initial;
-    for (size_t i = 0; i < size; i++) {
-        sum = sum_fn(&array[i], sum);
-    }
-
-    return sum;
-}

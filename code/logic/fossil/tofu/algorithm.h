@@ -112,16 +112,6 @@ fossil_tofu_t* fossil_algorithm_min(const fossil_tofu_t *array, size_t size);
  */
 fossil_tofu_t* fossil_algorithm_max(const fossil_tofu_t *array, size_t size);
 
-/**
- * Function to calculate the sum of numerical values in an array of `fossil_tofu_t` objects.
- *
- * @param array The array of `fossil_tofu_t` objects.
- * @param size The number of elements in the array.
- * @param sum_fn A function pointer to a sum function that calculates the sum based on tofu values.
- * @return The sum result.
- */
-void* fossil_algorithm_sum(const fossil_tofu_t *array, size_t size, void* (*sum_fn)(const fossil_tofu_t *tofu));
-
 #ifdef __cplusplus
 }
 #include <stdexcept>
@@ -242,18 +232,6 @@ namespace tofu {
          */
         static fossil_tofu_t* max(const fossil_tofu_t *array, size_t size) {
             return fossil_algorithm_max(array, size);
-        }
-
-        /**
-         * Calculates the sum of numerical values in an array of `fossil_tofu_t` objects.
-         *
-         * @param array The array of `fossil_tofu_t` objects.
-         * @param size The number of elements in the array.
-         * @param sum_fn A function pointer to a sum function.
-         * @return The sum result.
-         */
-        static void* sum(const fossil_tofu_t *array, size_t size, void* (*sum_fn)(const fossil_tofu_t *tofu)) {
-            return fossil_algorithm_sum(array, size, sum_fn);
         }
 
     };
