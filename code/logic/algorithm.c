@@ -21,20 +21,62 @@
 // *****************************************************************************
 
 int fossil_algorithm_compare(const fossil_tofu_t *tofu1, const fossil_tofu_t *tofu2) {
-    if (tofu1 == NULL || tofu2 == NULL || tofu1->value.data == NULL || tofu2->value.data == NULL) return FOSSIL_TOFU_SUCCESS;
+    if (tofu1 == NULL || tofu2 == NULL || tofu1->value.data == NULL || tofu2->value.data == NULL)
+        return 0;
 
     if (tofu1->type != tofu2->type) {
         return (int)tofu1->type - (int)tofu2->type;
     }
 
-    return strcmp(tofu1->value.data, tofu2->value.data);
+    switch (tofu1->type) {
+        case FOSSIL_TOFU_TYPE_I8:
+        case FOSSIL_TOFU_TYPE_I16:
+        case FOSSIL_TOFU_TYPE_I32:
+        case FOSSIL_TOFU_TYPE_I64:
+        case FOSSIL_TOFU_TYPE_U8:
+        case FOSSIL_TOFU_TYPE_U16:
+        case FOSSIL_TOFU_TYPE_U32:
+        case FOSSIL_TOFU_TYPE_U64:
+        case FOSSIL_TOFU_TYPE_SIZE: {
+            long long v1 = atoll(tofu1->value.data);
+            long long v2 = atoll(tofu2->value.data);
+            return (v1 > v2) - (v1 < v2);
+        }
+        case FOSSIL_TOFU_TYPE_FLOAT:
+        case FOSSIL_TOFU_TYPE_DOUBLE: {
+            double v1 = atof(tofu1->value.data);
+            double v2 = atof(tofu2->value.data);
+            return (v1 > v2) - (v1 < v2);
+        }
+        case FOSSIL_TOFU_TYPE_BOOL: {
+            int v1 = atoi(tofu1->value.data);
+            int v2 = atoi(tofu2->value.data);
+            return (v1 > v2) - (v1 < v2);
+        }
+        case FOSSIL_TOFU_TYPE_HEX:
+        case FOSSIL_TOFU_TYPE_OCTAL: {
+            int base = (tofu1->type == FOSSIL_TOFU_TYPE_HEX) ? 16 : 8;
+            long long v1 = strtoll(tofu1->value.data, NULL, base);
+            long long v2 = strtoll(tofu2->value.data, NULL, base);
+            return (v1 > v2) - (v1 < v2);
+        }
+        case FOSSIL_TOFU_TYPE_WSTR:
+        case FOSSIL_TOFU_TYPE_CSTR:
+        case FOSSIL_TOFU_TYPE_CCHAR:
+        case FOSSIL_TOFU_TYPE_WCHAR:
+        case FOSSIL_TOFU_TYPE_ANY:
+        default:
+            return strcmp(tofu1->value.data, tofu2->value.data);
+    }
 }
 
 int fossil_algorithm_search(const fossil_tofu_t *array, size_t size, const fossil_tofu_t *tofu) {
     if (array == NULL || tofu == NULL) return FOSSIL_TOFU_FAILURE;
 
     for (size_t i = 0; i < size; i++) {
+        // Use fossil_tofu_equals for value comparison, which should be implemented in a cross-platform way
         if (fossil_tofu_equals(&array[i], tofu)) {
+            // Cast to int is safe for small arrays; for very large arrays, consider returning ssize_t or size_t
             return (int)i;
         }
     }
@@ -115,10 +157,11 @@ int fossil_algorithm_sort(fossil_tofu_t *array, size_t size, bool ascending) {
 }
 
 int fossil_algorithm_transform(fossil_tofu_t *array, size_t size, int (*transform_fn)(fossil_tofu_t *tofu)) {
-    if (array == NULL || size == 0) return FOSSIL_TOFU_FAILURE;
+    if (array == NULL || size == 0 || transform_fn == NULL) return FOSSIL_TOFU_FAILURE;
 
     for (size_t i = 0; i < size; i++) {
-        if (transform_fn(&array[i]) != FOSSIL_TOFU_SUCCESS) {
+        int result = transform_fn(&array[i]);
+        if (result != FOSSIL_TOFU_SUCCESS) {
             return FOSSIL_TOFU_FAILURE;
         }
     }
@@ -127,7 +170,7 @@ int fossil_algorithm_transform(fossil_tofu_t *array, size_t size, int (*transfor
 }
 
 void* fossil_algorithm_accumulate(const fossil_tofu_t *array, size_t size, void* (*accumulate_fn)(const fossil_tofu_t *tofu, void *accum), void* initial) {
-    if (array == NULL || size == 0) return NULL;
+    if (array == NULL || size == 0 || accumulate_fn == NULL) return NULL;
 
     void *accum = initial;
     for (size_t i = 0; i < size; i++) {
@@ -138,7 +181,8 @@ void* fossil_algorithm_accumulate(const fossil_tofu_t *array, size_t size, void*
 }
 
 int fossil_algorithm_filter(const fossil_tofu_t *array, size_t size, bool (*filter_fn)(const fossil_tofu_t *tofu), fossil_tofu_t **result, size_t *result_size) {
-    if (array == NULL || size == 0) return FOSSIL_TOFU_FAILURE;
+    if (array == NULL || size == 0 || filter_fn == NULL || result == NULL || result_size == NULL)
+        return FOSSIL_TOFU_FAILURE;
 
     size_t count = 0;
     for (size_t i = 0; i < size; i++) {
@@ -153,8 +197,9 @@ int fossil_algorithm_filter(const fossil_tofu_t *array, size_t size, bool (*filt
         return FOSSIL_TOFU_SUCCESS;
     }
 
-    *result = fossil_tofu_alloc(count * sizeof(fossil_tofu_t));
+    *result = (fossil_tofu_t*)fossil_tofu_alloc(count * sizeof(fossil_tofu_t));
     if (*result == NULL) {
+        *result_size = 0;
         return FOSSIL_TOFU_FAILURE;
     }
 
@@ -173,11 +218,11 @@ int fossil_algorithm_filter(const fossil_tofu_t *array, size_t size, bool (*filt
 int fossil_algorithm_reverse(fossil_tofu_t *array, size_t size) {
     if (array == NULL || size == 0) return FOSSIL_TOFU_FAILURE;
 
-    fossil_tofu_t temp;
     for (size_t i = 0; i < size / 2; i++) {
-        temp = array[i];
-        array[i] = array[size - i - 1];
-        array[size - i - 1] = temp;
+        fossil_tofu_t temp;
+        fossil_tofu_copy(&temp, &array[i]);
+        fossil_tofu_copy(&array[i], &array[size - i - 1]);
+        fossil_tofu_copy(&array[size - i - 1], &temp);
     }
 
     return FOSSIL_TOFU_SUCCESS;
@@ -315,12 +360,12 @@ fossil_tofu_t* fossil_algorithm_max(const fossil_tofu_t *array, size_t size) {
     return max;
 }
 
-void* fossil_algorithm_sum(const fossil_tofu_t *array, size_t size, void* (*sum_fn)(const fossil_tofu_t *tofu)) {
-    if (array == NULL || size == 0) return NULL;
+void* fossil_algorithm_sum(const fossil_tofu_t *array, size_t size, void* (*sum_fn)(const fossil_tofu_t *tofu, void *accum), void *initial) {
+    if (array == NULL || size == 0 || sum_fn == NULL) return NULL;
 
-    void *sum = sum_fn(&array[0]);
-    for (size_t i = 1; i < size; i++) {
-        sum = sum_fn(&array[i]);
+    void *sum = initial;
+    for (size_t i = 0; i < size; i++) {
+        sum = sum_fn(&array[i], sum);
     }
 
     return sum;
