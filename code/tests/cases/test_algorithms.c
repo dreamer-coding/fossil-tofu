@@ -173,62 +173,62 @@ FOSSIL_TEST(c_test_algorithm_sort) {
 //     fossil_tofu_destroy(&array[2]);
 // }
 
-// FOSSIL_TEST(c_test_algorithm_min) {
-//     fossil_tofu_t array[3];
-//     array[0] = fossil_tofu_create("i32", "5");
-//     array[1] = fossil_tofu_create("i32", "2");
-//     array[2] = fossil_tofu_create("i32", "8");
-//     fossil_tofu_t *min = fossil_algorithm_min(array, 3);
-//     ASSUME_ITS_TRUE(min != NULL);
-//     if (min != NULL) {
-//         ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(min), "2");
-//     }
-//     fossil_tofu_destroy(&array[0]);
-//     fossil_tofu_destroy(&array[1]);
-//     fossil_tofu_destroy(&array[2]);
-// }
+FOSSIL_TEST(c_test_algorithm_min) {
+    fossil_tofu_t array[3];
+    array[0] = fossil_tofu_create("i32", "5");
+    array[1] = fossil_tofu_create("i32", "2");
+    array[2] = fossil_tofu_create("i32", "8");
+    fossil_tofu_t *min = fossil_algorithm_min(array, 3);
+    ASSUME_ITS_TRUE(min != NULL);
+    if (min != NULL) {
+        ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(min), "2");
+    }
+    fossil_tofu_destroy(&array[0]);
+    fossil_tofu_destroy(&array[1]);
+    fossil_tofu_destroy(&array[2]);
+}
 
-// FOSSIL_TEST(c_test_algorithm_max) {
-//     fossil_tofu_t array[3];
-//     array[0] = fossil_tofu_create("i32", "5");
-//     array[1] = fossil_tofu_create("i32", "2");
-//     array[2] = fossil_tofu_create("i32", "8");
-//     fossil_tofu_t *max = fossil_algorithm_max(array, 3);
-//     ASSUME_ITS_TRUE(max != NULL);
-//     if (max != NULL) {
-//         ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(max), "8");
-//     }
-//     fossil_tofu_destroy(&array[0]);
-//     fossil_tofu_destroy(&array[1]);
-//     fossil_tofu_destroy(&array[2]);
-// }
+FOSSIL_TEST(c_test_algorithm_max) {
+    fossil_tofu_t array[3];
+    array[0] = fossil_tofu_create("i32", "5");
+    array[1] = fossil_tofu_create("i32", "2");
+    array[2] = fossil_tofu_create("i32", "8");
+    fossil_tofu_t *max = fossil_algorithm_max(array, 3);
+    ASSUME_ITS_TRUE(max != NULL);
+    if (max != NULL) {
+        ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(max), "8");
+    }
+    fossil_tofu_destroy(&array[0]);
+    fossil_tofu_destroy(&array[1]);
+    fossil_tofu_destroy(&array[2]);
+}
 
-// static void* sum_fn(const fossil_tofu_t *tofu) {
-//     int *value = (int*)fossil_tofu_alloc(sizeof(int));
-//     if (!value) return NULL;
-//     const char *str = fossil_tofu_get_value(tofu);
-//     *value = (str != NULL) ? atoi(str) : 0;
-//     return value;
-// }
+static void* sum_fn(const fossil_tofu_t *tofu) {
+    int *value = (int*)fossil_tofu_alloc(sizeof(int));
+    if (!value) return NULL;
+    const char *str = fossil_tofu_get_value(tofu);
+    *value = (str != NULL) ? atoi(str) : 0;
+    return value;
+}
 
-// FOSSIL_TEST(c_test_algorithm_sum) {
-//     fossil_tofu_t array[3];
-//     array[0] = fossil_tofu_create("i32", "2");
-//     array[1] = fossil_tofu_create("i32", "3");
-//     array[2] = fossil_tofu_create("i32", "5");
-//     int total = 0;
-//     for (size_t i = 0; i < 3; ++i) {
-//         int *v = (int*)sum_fn(&array[i]);
-//         if (v) {
-//             total += *v;
-//             free(v);
-//         }
-//     }
-//     ASSUME_ITS_EQUAL_I32(total, 10);
-//     fossil_tofu_destroy(&array[0]);
-//     fossil_tofu_destroy(&array[1]);
-//     fossil_tofu_destroy(&array[2]);
-// }
+FOSSIL_TEST(c_test_algorithm_sum) {
+    fossil_tofu_t array[3];
+    array[0] = fossil_tofu_create("i32", "2");
+    array[1] = fossil_tofu_create("i32", "3");
+    array[2] = fossil_tofu_create("i32", "5");
+    int total = 0;
+    for (size_t i = 0; i < 3; ++i) {
+        int *v = (int*)sum_fn(&array[i]);
+        if (v) {
+            total += *v;
+            free(v);
+        }
+    }
+    ASSUME_ITS_EQUAL_I32(total, 10);
+    fossil_tofu_destroy(&array[0]);
+    fossil_tofu_destroy(&array[1]);
+    fossil_tofu_destroy(&array[2]);
+}
 
 // * * * * * * * * * * * * * * * * * * * * * * * *
 // * Fossil Logic Test Pool
@@ -242,9 +242,9 @@ FOSSIL_TEST_GROUP(c_algorithm_tofu_tests) {
     // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_accumulate);
     // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_filter);
     // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_reverse);
-    // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_min);
-    // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_max);
-    // FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_sum);
+    FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_min);
+    FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_max);
+    FOSSIL_TEST_ADD(c_algorithm_tofu_fixture, c_test_algorithm_sum);
 
     // Register the test group
     FOSSIL_TEST_REGISTER(c_algorithm_tofu_fixture);
