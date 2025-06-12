@@ -56,8 +56,8 @@ FOSSIL_TEST(c_test_stack_create_default) {
 
 FOSSIL_TEST(c_test_stack_insert_and_remove) {
     fossil_stack_t* stack = fossil_stack_create_container("i32");
-    ASSUME_ITS_EQUAL_I32(fossil_stack_insert(stack, "10"), FOSSIL_TOFU_SUCCESS);
-    ASSUME_ITS_EQUAL_I32(fossil_stack_insert(stack, "20"), FOSSIL_TOFU_SUCCESS);
+    ASSUME_ITS_TRUE(fossil_stack_insert(stack, "10"));
+    ASSUME_ITS_TRUE(fossil_stack_insert(stack, "20"));
     ASSUME_ITS_EQUAL_I32(fossil_stack_size(stack), 2);
     ASSUME_ITS_EQUAL_I32(fossil_stack_remove(stack), FOSSIL_TOFU_SUCCESS);
     fossil_stack_destroy(stack);
