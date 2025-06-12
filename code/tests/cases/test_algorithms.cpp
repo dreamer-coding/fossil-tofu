@@ -160,45 +160,45 @@ FOSSIL_TEST(cpp_algorithm_sort_descending) {
 //     ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(&cpp_array[2]), "7");
 // }
 
-// FOSSIL_TEST(cpp_algorithm_min) {
-//     Tofu array[3] = { Tofu("i32", "15"), Tofu("i32", "12"), Tofu("i32", "18") };
-//     fossil_tofu_t cpp_array[3] = { array[0].get_c_struct(), array[1].get_c_struct(), array[2].get_c_struct() };
-//     fossil_tofu_t *min = Algorithm::min(cpp_array, 3);
-//     // Defensive: Ensure null-termination for Windows safety
-//     fossil_tofu_get_value(min)[31] = '\0';
-//     ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(min), "12");
-// }
+FOSSIL_TEST(cpp_algorithm_min) {
+    Tofu array[3] = { Tofu("i32", "15"), Tofu("i32", "12"), Tofu("i32", "18") };
+    fossil_tofu_t cpp_array[3] = { array[0].get_c_struct(), array[1].get_c_struct(), array[2].get_c_struct() };
+    fossil_tofu_t *min = Algorithm::min(cpp_array, 3);
+    // Defensive: Ensure null-termination for Windows safety
+    fossil_tofu_get_value(min)[31] = '\0';
+    ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(min), "12");
+}
 
-// FOSSIL_TEST(cpp_algorithm_max) {
-//     Tofu array[3] = { Tofu("i32", "15"), Tofu("i32", "12"), Tofu("i32", "18") };
-//     fossil_tofu_t cpp_array[3] = { array[0].get_c_struct(), array[1].get_c_struct(), array[2].get_c_struct() };
-//     fossil_tofu_t *max = Algorithm::max(cpp_array, 3);
-//     // Defensive: Ensure null-termination for Windows safety
-//     fossil_tofu_get_value(max)[31] = '\0';
-//     ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(max), "18");
-// }
+FOSSIL_TEST(cpp_algorithm_max) {
+    Tofu array[3] = { Tofu("i32", "15"), Tofu("i32", "12"), Tofu("i32", "18") };
+    fossil_tofu_t cpp_array[3] = { array[0].get_c_struct(), array[1].get_c_struct(), array[2].get_c_struct() };
+    fossil_tofu_t *max = Algorithm::max(cpp_array, 3);
+    // Defensive: Ensure null-termination for Windows safety
+    fossil_tofu_get_value(max)[31] = '\0';
+    ASSUME_ITS_EQUAL_CSTR(fossil_tofu_get_value(max), "18");
+}
 
-// static void* cpp_sum_fn(const fossil_tofu_t *tofu) {
-//     int *value = (int*)fossil_tofu_alloc(sizeof(int));
-//     // Defensive: Ensure null-termination for Windows safety
-//     char buf[32];
-//     strncpy(buf, fossil_tofu_get_value(tofu), 31);
-//     buf[31] = '\0';
-//     *value = atoi(buf);
-//     return value;
-// }
+static void* cpp_sum_fn(const fossil_tofu_t *tofu) {
+    int *value = (int*)fossil_tofu_alloc(sizeof(int));
+    // Defensive: Ensure null-termination for Windows safety
+    char buf[32];
+    strncpy(buf, fossil_tofu_get_value(tofu), 31);
+    buf[31] = '\0';
+    *value = atoi(buf);
+    return value;
+}
 
-// FOSSIL_TEST(cpp_algorithm_sum) {
-//     Tofu array[3] = { Tofu("i32", "2"), Tofu("i32", "3"), Tofu("i32", "5") };
-//     int total = 0;
-//     int *values[3];
-//     for (size_t i = 0; i < 3; ++i) {
-//         values[i] = (int*)cpp_sum_fn(&array[i].get_c_struct());
-//         total += *values[i];
-//         free(values[i]);
-//     }
-//     ASSUME_ITS_EQUAL_I32(total, 10);
-// }
+FOSSIL_TEST(cpp_algorithm_sum) {
+    Tofu array[3] = { Tofu("i32", "2"), Tofu("i32", "3"), Tofu("i32", "5") };
+    int total = 0;
+    int *values[3];
+    for (size_t i = 0; i < 3; ++i) {
+        values[i] = (int*)cpp_sum_fn(&array[i].get_c_struct());
+        total += *values[i];
+        free(values[i]);
+    }
+    ASSUME_ITS_EQUAL_I32(total, 10);
+}
 
 // * * * * * * * * * * * * * * * * * * * * * * * *
 // * Fossil Logic Test Pool
@@ -213,9 +213,9 @@ FOSSIL_TEST_GROUP(cpp_algorithm_tofu_tests) {
     // FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_accumulate);
     // FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_filter);
     // FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_reverse);
-    // FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_min);
-    // FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_max);
-    // FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_sum);
+    FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_min);
+    FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_max);
+    FOSSIL_TEST_ADD(cpp_algorithm_tofu_fixture, cpp_algorithm_sum);
 
     // Register the test group
     FOSSIL_TEST_REGISTER(cpp_algorithm_tofu_fixture);
