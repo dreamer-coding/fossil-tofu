@@ -180,18 +180,18 @@ FOSSIL_TEST(objc_test_dlist_empty_and_null_checks) {
 // * * * * * * * * * * * * * * * * * * * * * * * *
 FOSSIL_TEST_GROUP(objc_dlist_tofu_tests) {    
     // dlist ToFu Fixture
-    FOSSIL_TEST_ADD(objc_dlist_tofu_fixture, objc_test_dlist_create_and_destroy);
-    FOSSIL_TEST_ADD(objc_dlist_tofu_fixture, objc_test_dlist_create_default);
-    FOSSIL_TEST_ADD(objc_dlist_tofu_fixture, objc_test_dlist_insert_and_size);
-    FOSSIL_TEST_ADD(objc_dlist_tofu_fixture, objc_test_dlist_remove);
-    FOSSIL_TEST_ADD(objc_dlist_tofu_fixture, objc_test_dlist_reverse_forward);
-    FOSSIL_TEST_ADD(objc_dlist_tofu_fixture, objc_test_dlist_reverse_backward);
-    FOSSIL_TEST_ADD(objc_dlist_tofu_fixture, objc_test_dlist_get_and_set);
-    FOSSIL_TEST_ADD(objc_dlist_tofu_fixture, objc_test_dlist_get_front_and_back);
-    FOSSIL_TEST_ADD(objc_dlist_tofu_fixture, objc_test_dlist_set_front_and_back);
-    FOSSIL_TEST_ADD(objc_dlist_tofu_fixture, objc_test_dlist_copy_and_move);
-    FOSSIL_TEST_ADD(objc_dlist_tofu_fixture, objc_test_dlist_empty_and_null_checks);
+    FOSSIL_ADD_TEST(objc_dlist_tofu_fixture, objc_test_dlist_create_and_destroy);
+    FOSSIL_ADD_TEST(objc_dlist_tofu_fixture, objc_test_dlist_create_default);
+    FOSSIL_ADD_TEST(objc_dlist_tofu_fixture, objc_test_dlist_insert_and_size);
+    FOSSIL_ADD_TEST(objc_dlist_tofu_fixture, objc_test_dlist_remove);
+    FOSSIL_ADD_TEST(objc_dlist_tofu_fixture, objc_test_dlist_reverse_forward);
+    FOSSIL_ADD_TEST(objc_dlist_tofu_fixture, objc_test_dlist_reverse_backward);
+    FOSSIL_ADD_TEST(objc_dlist_tofu_fixture, objc_test_dlist_get_and_set);
+    FOSSIL_ADD_TEST(objc_dlist_tofu_fixture, objc_test_dlist_get_front_and_back);
+    FOSSIL_ADD_TEST(objc_dlist_tofu_fixture, objc_test_dlist_set_front_and_back);
+    FOSSIL_ADD_TEST(objc_dlist_tofu_fixture, objc_test_dlist_copy_and_move);
+    FOSSIL_ADD_TEST(objc_dlist_tofu_fixture, objc_test_dlist_empty_and_null_checks);
 
     // Register the test group
-    FOSSIL_TEST_REGISTER(objc_dlist_tofu_fixture);
+    FOSSIL_ADD_SUITE(objc_dlist_tofu_fixture);
 } // end of tests

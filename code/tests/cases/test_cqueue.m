@@ -175,18 +175,18 @@ FOSSIL_TEST(objc_test_cqueue_size_consistency) {
 // * * * * * * * * * * * * * * * * * * * * * * * *
 FOSSIL_TEST_GROUP(objc_cqueue_tofu_tests) {    
     // Generic ToFu Fixture
-    FOSSIL_TEST_ADD(objc_cqueue_tofu_fixture, objc_test_cqueue_create_container_and_destroy);
-    FOSSIL_TEST_ADD(objc_cqueue_tofu_fixture, objc_test_cqueue_create_default_and_destroy);
-    FOSSIL_TEST_ADD(objc_cqueue_tofu_fixture, objc_test_cqueue_insert_and_remove);
-    FOSSIL_TEST_ADD(objc_cqueue_tofu_fixture, objc_test_cqueue_create_copy);
-    FOSSIL_TEST_ADD(objc_cqueue_tofu_fixture, objc_test_cqueue_create_move);
-    FOSSIL_TEST_ADD(objc_cqueue_tofu_fixture, objc_test_cqueue_not_empty_and_is_empty);
-    FOSSIL_TEST_ADD(objc_cqueue_tofu_fixture, objc_test_cqueue_not_cnullptr_and_is_cnullptr);
-    FOSSIL_TEST_ADD(objc_cqueue_tofu_fixture, objc_test_cqueue_set_front_and_set_rear);
-    FOSSIL_TEST_ADD(objc_cqueue_tofu_fixture, objc_test_cqueue_get_front_and_get_rear_empty);
-    FOSSIL_TEST_ADD(objc_cqueue_tofu_fixture, objc_test_cqueue_remove_empty);
-    FOSSIL_TEST_ADD(objc_cqueue_tofu_fixture, objc_test_cqueue_size_consistency);
+    FOSSIL_ADD_TEST(objc_cqueue_tofu_fixture, objc_test_cqueue_create_container_and_destroy);
+    FOSSIL_ADD_TEST(objc_cqueue_tofu_fixture, objc_test_cqueue_create_default_and_destroy);
+    FOSSIL_ADD_TEST(objc_cqueue_tofu_fixture, objc_test_cqueue_insert_and_remove);
+    FOSSIL_ADD_TEST(objc_cqueue_tofu_fixture, objc_test_cqueue_create_copy);
+    FOSSIL_ADD_TEST(objc_cqueue_tofu_fixture, objc_test_cqueue_create_move);
+    FOSSIL_ADD_TEST(objc_cqueue_tofu_fixture, objc_test_cqueue_not_empty_and_is_empty);
+    FOSSIL_ADD_TEST(objc_cqueue_tofu_fixture, objc_test_cqueue_not_cnullptr_and_is_cnullptr);
+    FOSSIL_ADD_TEST(objc_cqueue_tofu_fixture, objc_test_cqueue_set_front_and_set_rear);
+    FOSSIL_ADD_TEST(objc_cqueue_tofu_fixture, objc_test_cqueue_get_front_and_get_rear_empty);
+    FOSSIL_ADD_TEST(objc_cqueue_tofu_fixture, objc_test_cqueue_remove_empty);
+    FOSSIL_ADD_TEST(objc_cqueue_tofu_fixture, objc_test_cqueue_size_consistency);
 
     // Register the test group
-    FOSSIL_TEST_REGISTER(objc_cqueue_tofu_fixture);
+    FOSSIL_ADD_SUITE(objc_cqueue_tofu_fixture);
 } // end of tests

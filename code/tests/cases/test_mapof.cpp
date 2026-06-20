@@ -147,16 +147,16 @@ FOSSIL_TEST(cpp_test_mapof_remove_nonexistent) {
 // * * * * * * * * * * * * * * * * * * * * * * * *
 FOSSIL_TEST_GROUP(cpp_mapof_tofu_tests) {    
     // Generic ToFu Fixture
-    FOSSIL_TEST_ADD(cpp_mapof_tofu_fixture, cpp_test_mapof_create_and_destroy);
-    FOSSIL_TEST_ADD(cpp_mapof_tofu_fixture, cpp_test_mapof_create_default);
-    FOSSIL_TEST_ADD(cpp_mapof_tofu_fixture, cpp_test_mapof_insert_and_contains);
-    FOSSIL_TEST_ADD(cpp_mapof_tofu_fixture, cpp_test_mapof_remove);
-    FOSSIL_TEST_ADD(cpp_mapof_tofu_fixture, cpp_test_mapof_copy_constructor);
-    FOSSIL_TEST_ADD(cpp_mapof_tofu_fixture, cpp_test_mapof_move_constructor);
-    FOSSIL_TEST_ADD(cpp_mapof_tofu_fixture, cpp_test_mapof_is_empty_and_not_empty);
-    FOSSIL_TEST_ADD(cpp_mapof_tofu_fixture, cpp_test_mapof_insert_duplicate);
-    FOSSIL_TEST_ADD(cpp_mapof_tofu_fixture, cpp_test_mapof_remove_nonexistent);
+    FOSSIL_ADD_TEST(cpp_mapof_tofu_fixture, cpp_test_mapof_create_and_destroy);
+    FOSSIL_ADD_TEST(cpp_mapof_tofu_fixture, cpp_test_mapof_create_default);
+    FOSSIL_ADD_TEST(cpp_mapof_tofu_fixture, cpp_test_mapof_insert_and_contains);
+    FOSSIL_ADD_TEST(cpp_mapof_tofu_fixture, cpp_test_mapof_remove);
+    FOSSIL_ADD_TEST(cpp_mapof_tofu_fixture, cpp_test_mapof_copy_constructor);
+    FOSSIL_ADD_TEST(cpp_mapof_tofu_fixture, cpp_test_mapof_move_constructor);
+    FOSSIL_ADD_TEST(cpp_mapof_tofu_fixture, cpp_test_mapof_is_empty_and_not_empty);
+    FOSSIL_ADD_TEST(cpp_mapof_tofu_fixture, cpp_test_mapof_insert_duplicate);
+    FOSSIL_ADD_TEST(cpp_mapof_tofu_fixture, cpp_test_mapof_remove_nonexistent);
 
     // Register the test group
-    FOSSIL_TEST_REGISTER(cpp_mapof_tofu_fixture);
+    FOSSIL_ADD_SUITE(cpp_mapof_tofu_fixture);
 } // end of tests

@@ -107,14 +107,14 @@ FOSSIL_TEST(cpp_test_tree_create_copy_empty) {
 // * Fossil Logic Test Pool
 // * * * * * * * * * * * * * * * * * * * * * * * *
 FOSSIL_TEST_GROUP(cpp_tree_tofu_tests) {    
-    FOSSIL_TEST_ADD(cpp_tree_tofu_fixture, cpp_test_tree_create_and_destroy);
-    FOSSIL_TEST_ADD(cpp_tree_tofu_fixture, cpp_test_tree_null_pointer_safety);
-    FOSSIL_TEST_ADD(cpp_tree_tofu_fixture, cpp_test_tree_insert_null_tree_or_value);
-    FOSSIL_TEST_ADD(cpp_tree_tofu_fixture, cpp_test_tree_search_null_value);
-    FOSSIL_TEST_ADD(cpp_tree_tofu_fixture, cpp_test_tree_remove_null_value);
-    FOSSIL_TEST_ADD(cpp_tree_tofu_fixture, cpp_test_tree_create_default);
-    FOSSIL_TEST_ADD(cpp_tree_tofu_fixture, cpp_test_tree_create_copy_null);
-    FOSSIL_TEST_ADD(cpp_tree_tofu_fixture, cpp_test_tree_create_copy_empty);
+    FOSSIL_ADD_TEST(cpp_tree_tofu_fixture, cpp_test_tree_create_and_destroy);
+    FOSSIL_ADD_TEST(cpp_tree_tofu_fixture, cpp_test_tree_null_pointer_safety);
+    FOSSIL_ADD_TEST(cpp_tree_tofu_fixture, cpp_test_tree_insert_null_tree_or_value);
+    FOSSIL_ADD_TEST(cpp_tree_tofu_fixture, cpp_test_tree_search_null_value);
+    FOSSIL_ADD_TEST(cpp_tree_tofu_fixture, cpp_test_tree_remove_null_value);
+    FOSSIL_ADD_TEST(cpp_tree_tofu_fixture, cpp_test_tree_create_default);
+    FOSSIL_ADD_TEST(cpp_tree_tofu_fixture, cpp_test_tree_create_copy_null);
+    FOSSIL_ADD_TEST(cpp_tree_tofu_fixture, cpp_test_tree_create_copy_empty);
 
-    FOSSIL_TEST_REGISTER(cpp_tree_tofu_fixture);
+    FOSSIL_ADD_SUITE(cpp_tree_tofu_fixture);
 } // end of tests

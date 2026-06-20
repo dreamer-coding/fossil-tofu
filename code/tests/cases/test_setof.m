@@ -158,17 +158,17 @@ FOSSIL_TEST(objc_test_setof_null_args) {
 // * * * * * * * * * * * * * * * * * * * * * * * *
 FOSSIL_TEST_GROUP(objc_setof_tofu_tests) {    
     // Generic ToFu Fixture
-    FOSSIL_TEST_ADD(objc_setof_tofu_fixture, objc_test_setof_create_and_destroy);
-    FOSSIL_TEST_ADD(objc_setof_tofu_fixture, objc_test_setof_create_default);
-    FOSSIL_TEST_ADD(objc_setof_tofu_fixture, objc_test_setof_insert_and_contains);
-    FOSSIL_TEST_ADD(objc_setof_tofu_fixture, objc_test_setof_remove);
-    FOSSIL_TEST_ADD(objc_setof_tofu_fixture, objc_test_setof_copy_constructor);
-    FOSSIL_TEST_ADD(objc_setof_tofu_fixture, objc_test_setof_move_constructor);
-    FOSSIL_TEST_ADD(objc_setof_tofu_fixture, objc_test_setof_is_empty_and_not_empty);
-    FOSSIL_TEST_ADD(objc_setof_tofu_fixture, objc_test_setof_insert_duplicate);
-    FOSSIL_TEST_ADD(objc_setof_tofu_fixture, objc_test_setof_remove_nonexistent);
-    FOSSIL_TEST_ADD(objc_setof_tofu_fixture, objc_test_setof_null_args);
+    FOSSIL_ADD_TEST(objc_setof_tofu_fixture, objc_test_setof_create_and_destroy);
+    FOSSIL_ADD_TEST(objc_setof_tofu_fixture, objc_test_setof_create_default);
+    FOSSIL_ADD_TEST(objc_setof_tofu_fixture, objc_test_setof_insert_and_contains);
+    FOSSIL_ADD_TEST(objc_setof_tofu_fixture, objc_test_setof_remove);
+    FOSSIL_ADD_TEST(objc_setof_tofu_fixture, objc_test_setof_copy_constructor);
+    FOSSIL_ADD_TEST(objc_setof_tofu_fixture, objc_test_setof_move_constructor);
+    FOSSIL_ADD_TEST(objc_setof_tofu_fixture, objc_test_setof_is_empty_and_not_empty);
+    FOSSIL_ADD_TEST(objc_setof_tofu_fixture, objc_test_setof_insert_duplicate);
+    FOSSIL_ADD_TEST(objc_setof_tofu_fixture, objc_test_setof_remove_nonexistent);
+    FOSSIL_ADD_TEST(objc_setof_tofu_fixture, objc_test_setof_null_args);
 
     // Register the test group
-    FOSSIL_TEST_REGISTER(objc_setof_tofu_fixture);
+    FOSSIL_ADD_SUITE(objc_setof_tofu_fixture);
 } // end of tests

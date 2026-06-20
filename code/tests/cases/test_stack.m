@@ -197,23 +197,23 @@ FOSSIL_TEST(objc_test_stack_set_out_of_bounds) {
 // * * * * * * * * * * * * * * * * * * * * * * * *
 FOSSIL_TEST_GROUP(objc_stack_tofu_tests) {    
     // Generic ToFu Fixture
-    FOSSIL_TEST_ADD(objc_stack_tofu_fixture, objc_test_stack_create_destroy);
-    FOSSIL_TEST_ADD(objc_stack_tofu_fixture, objc_test_stack_create_default);
-    FOSSIL_TEST_ADD(objc_stack_tofu_fixture, objc_test_stack_insert_and_remove);
-    FOSSIL_TEST_ADD(objc_stack_tofu_fixture, objc_test_stack_copy_constructor);
-    FOSSIL_TEST_ADD(objc_stack_tofu_fixture, objc_test_stack_move_constructor);
-    FOSSIL_TEST_ADD(objc_stack_tofu_fixture, objc_test_stack_top_and_get_set);
-    FOSSIL_TEST_ADD(objc_stack_tofu_fixture, objc_test_stack_empty_and_not_empty);
-    FOSSIL_TEST_ADD(objc_stack_tofu_fixture, objc_test_stack_insert_null_stack);
-    FOSSIL_TEST_ADD(objc_stack_tofu_fixture, objc_test_stack_remove_null_stack);
-    FOSSIL_TEST_ADD(objc_stack_tofu_fixture, objc_test_stack_remove_empty_stack);
-    FOSSIL_TEST_ADD(objc_stack_tofu_fixture, objc_test_stack_size_null_stack);
-    FOSSIL_TEST_ADD(objc_stack_tofu_fixture, objc_test_stack_not_empty_and_is_empty_variants);
-    FOSSIL_TEST_ADD(objc_stack_tofu_fixture, objc_test_stack_not_cnullptr_and_is_cnullptr);
-    FOSSIL_TEST_ADD(objc_stack_tofu_fixture, objc_test_stack_top_empty_stack);
-    FOSSIL_TEST_ADD(objc_stack_tofu_fixture, objc_test_stack_get_out_of_bounds);
-    FOSSIL_TEST_ADD(objc_stack_tofu_fixture, objc_test_stack_set_out_of_bounds);
+    FOSSIL_ADD_TEST(objc_stack_tofu_fixture, objc_test_stack_create_destroy);
+    FOSSIL_ADD_TEST(objc_stack_tofu_fixture, objc_test_stack_create_default);
+    FOSSIL_ADD_TEST(objc_stack_tofu_fixture, objc_test_stack_insert_and_remove);
+    FOSSIL_ADD_TEST(objc_stack_tofu_fixture, objc_test_stack_copy_constructor);
+    FOSSIL_ADD_TEST(objc_stack_tofu_fixture, objc_test_stack_move_constructor);
+    FOSSIL_ADD_TEST(objc_stack_tofu_fixture, objc_test_stack_top_and_get_set);
+    FOSSIL_ADD_TEST(objc_stack_tofu_fixture, objc_test_stack_empty_and_not_empty);
+    FOSSIL_ADD_TEST(objc_stack_tofu_fixture, objc_test_stack_insert_null_stack);
+    FOSSIL_ADD_TEST(objc_stack_tofu_fixture, objc_test_stack_remove_null_stack);
+    FOSSIL_ADD_TEST(objc_stack_tofu_fixture, objc_test_stack_remove_empty_stack);
+    FOSSIL_ADD_TEST(objc_stack_tofu_fixture, objc_test_stack_size_null_stack);
+    FOSSIL_ADD_TEST(objc_stack_tofu_fixture, objc_test_stack_not_empty_and_is_empty_variants);
+    FOSSIL_ADD_TEST(objc_stack_tofu_fixture, objc_test_stack_not_cnullptr_and_is_cnullptr);
+    FOSSIL_ADD_TEST(objc_stack_tofu_fixture, objc_test_stack_top_empty_stack);
+    FOSSIL_ADD_TEST(objc_stack_tofu_fixture, objc_test_stack_get_out_of_bounds);
+    FOSSIL_ADD_TEST(objc_stack_tofu_fixture, objc_test_stack_set_out_of_bounds);
 
     // Register the test group
-    FOSSIL_TEST_REGISTER(objc_stack_tofu_fixture);
+    FOSSIL_ADD_SUITE(objc_stack_tofu_fixture);
 } // end of tests

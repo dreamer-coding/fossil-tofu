@@ -241,22 +241,22 @@ FOSSIL_TEST(objc_test_vector_pop_at_various_positions) {
 // * * * * * * * * * * * * * * * * * * * * * * * *
 FOSSIL_TEST_GROUP(objc_vector_tofu_tests) {    
     // Generic ToFu Fixture
-    FOSSIL_TEST_ADD(objc_vector_tofu_fixture, objc_test_vector_create_and_destroy);
-    FOSSIL_TEST_ADD(objc_vector_tofu_fixture, objc_test_vector_push_and_get);
-    FOSSIL_TEST_ADD(objc_vector_tofu_fixture, objc_test_vector_push_front_and_pop_front);
-    FOSSIL_TEST_ADD(objc_vector_tofu_fixture, objc_test_vector_push_at_and_pop_at);
-    FOSSIL_TEST_ADD(objc_vector_tofu_fixture, objc_test_vector_set_and_get);
-    FOSSIL_TEST_ADD(objc_vector_tofu_fixture, objc_test_vector_erase_and_empty);
-    FOSSIL_TEST_ADD(objc_vector_tofu_fixture, objc_test_vector_copy_and_move);
-    FOSSIL_TEST_ADD(objc_vector_tofu_fixture, objc_test_vector_pop_back);
-    FOSSIL_TEST_ADD(objc_vector_tofu_fixture, objc_test_vector_push_beyond_initial_capacity);
-    FOSSIL_TEST_ADD(objc_vector_tofu_fixture, objc_test_vector_pop_until_empty);
-    FOSSIL_TEST_ADD(objc_vector_tofu_fixture, objc_test_vector_pop_front_until_empty);
-    FOSSIL_TEST_ADD(objc_vector_tofu_fixture, objc_test_vector_null_pointer_safety);
-    FOSSIL_TEST_ADD(objc_vector_tofu_fixture, objc_test_vector_set_at_various_positions);
-    FOSSIL_TEST_ADD(objc_vector_tofu_fixture, objc_test_vector_push_at_beginning_and_end);
-    FOSSIL_TEST_ADD(objc_vector_tofu_fixture, objc_test_vector_pop_at_various_positions);
+    FOSSIL_ADD_TEST(objc_vector_tofu_fixture, objc_test_vector_create_and_destroy);
+    FOSSIL_ADD_TEST(objc_vector_tofu_fixture, objc_test_vector_push_and_get);
+    FOSSIL_ADD_TEST(objc_vector_tofu_fixture, objc_test_vector_push_front_and_pop_front);
+    FOSSIL_ADD_TEST(objc_vector_tofu_fixture, objc_test_vector_push_at_and_pop_at);
+    FOSSIL_ADD_TEST(objc_vector_tofu_fixture, objc_test_vector_set_and_get);
+    FOSSIL_ADD_TEST(objc_vector_tofu_fixture, objc_test_vector_erase_and_empty);
+    FOSSIL_ADD_TEST(objc_vector_tofu_fixture, objc_test_vector_copy_and_move);
+    FOSSIL_ADD_TEST(objc_vector_tofu_fixture, objc_test_vector_pop_back);
+    FOSSIL_ADD_TEST(objc_vector_tofu_fixture, objc_test_vector_push_beyond_initial_capacity);
+    FOSSIL_ADD_TEST(objc_vector_tofu_fixture, objc_test_vector_pop_until_empty);
+    FOSSIL_ADD_TEST(objc_vector_tofu_fixture, objc_test_vector_pop_front_until_empty);
+    FOSSIL_ADD_TEST(objc_vector_tofu_fixture, objc_test_vector_null_pointer_safety);
+    FOSSIL_ADD_TEST(objc_vector_tofu_fixture, objc_test_vector_set_at_various_positions);
+    FOSSIL_ADD_TEST(objc_vector_tofu_fixture, objc_test_vector_push_at_beginning_and_end);
+    FOSSIL_ADD_TEST(objc_vector_tofu_fixture, objc_test_vector_pop_at_various_positions);
 
     // Register the test group
-    FOSSIL_TEST_REGISTER(objc_vector_tofu_fixture);
+    FOSSIL_ADD_SUITE(objc_vector_tofu_fixture);
 } // end of tests
